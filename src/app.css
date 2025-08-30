@@ -1,3 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #f2f2f2;
+  --color-primary: #4088cf;
+  --color-white: #fff;
+  --color-secondary: #e84855;
+  --color-tertiary: #70cbe6;
+  --color-text: #000;
+  --color-accent: #d9534f;
+  --color-valid: #4caf50;
+  --color-brain: #d433a9;
+  --color-error: #ad2626;
+  --color-success: #00ff00;
+  --color-info: #17a2b8;
+  --color-warning: #ffc107;
+  --color-discord: #5468ff;
+  --color-discord-hover: #656c85cc;
+}
