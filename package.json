@@ -4,7 +4,6 @@
     "dev": "vinxi dev",
     "build": "vinxi build",
     "start": "vinxi start",
-    "start:prod": "node start.js",
     "lint": "eslint --fix \"**/*.{ts,tsx,js,jsx}\""
   },
   "type": "module",
