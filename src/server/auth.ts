@@ -15,6 +15,8 @@ export const authOptions: SolidAuthConfig = {
       clientSecret: serverEnv.DISCORD_SECRET,
     }),
   ],
-  debug: false,
-  basePath: import.meta.env.VITE_AUTH_PATH,
+  debug: process.env.NODE_ENV === 'development',
+  basePath: "/api/auth",
+  secret: serverEnv.AUTH_SECRET,
+  trustHost: serverEnv.AUTH_TRUST_HOST === 'true',
 };
