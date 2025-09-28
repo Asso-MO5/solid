@@ -15,6 +15,7 @@ const AdminEventsList = () => {
   const eventsCtrl = EventsCtrl()
   const { events, loading, getEvents } = eventsCtrl
   const calendar = CalCtrl()
+  const [previousDate, setPreviousDate] = createSignal<Date | null>(null)
   const [searchParams] = useSearchParams()
   const [highlightedEventId, setHighlightedEventId] = createSignal<string | null>(null)
 
@@ -37,7 +38,33 @@ const AdminEventsList = () => {
   createEffect(() => {
     const currentView = calendar.view()
     const currentDate = calendar.selectedDate()
-    getEvents(currentView, currentDate)
+    const prevDate = previousDate()
+
+    // Comparer selon la vue
+    let shouldRefresh = false
+
+    if (currentView === 'month') {
+      // En vue mois, on ne refresh que si le mois/année change
+      shouldRefresh = !prevDate ||
+        prevDate.getMonth() !== currentDate.getMonth() ||
+        prevDate.getFullYear() !== currentDate.getFullYear()
+    } else if (currentView === 'week') {
+      // En vue semaine, on ne refresh que si la semaine change
+      shouldRefresh = !prevDate ||
+        Math.floor(prevDate.getTime() / (7 * 24 * 60 * 60 * 1000)) !==
+        Math.floor(currentDate.getTime() / (7 * 24 * 60 * 60 * 1000))
+    } else {
+      // En vue jour/liste, on refresh si le jour change
+      shouldRefresh = !prevDate ||
+        prevDate.getDate() !== currentDate.getDate() ||
+        prevDate.getMonth() !== currentDate.getMonth() ||
+        prevDate.getFullYear() !== currentDate.getFullYear()
+    }
+
+    if (shouldRefresh) {
+      setPreviousDate(currentDate)
+      getEvents(currentView, currentDate)
+    }
   })
 
 
