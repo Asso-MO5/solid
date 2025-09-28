@@ -1,4 +1,5 @@
-import { createSignal, createMemo, onMount, onCleanup } from "solid-js"
+import { createSignal, createMemo, onMount, onCleanup, createEffect } from "solid-js"
+import { useLocation } from "@solidjs/router"
 import type { CalendarView, CalendarDay, CalendarEvent, CalendarCtrlReturn } from "./Cal.types"
 
 const [view, setView] = createSignal<CalendarView>('month')
@@ -50,6 +51,8 @@ const initializeFromURL = () => {
 }
 
 export function CalCtrl(): CalendarCtrlReturn {
+  const location = useLocation()
+
   // Initialiser depuis l'URL au montage
   onMount(() => {
     initializeFromURL()
@@ -64,6 +67,14 @@ export function CalCtrl(): CalendarCtrlReturn {
     onCleanup(() => {
       window.removeEventListener('popstate', handlePopState)
     })
+  })
+
+  // Réagir aux changements de route (navigation SolidJS Router)
+  createEffect(() => {
+    // Seulement si on est sur la page du calendrier
+    if (location.pathname === '/admin/cal') {
+      initializeFromURL()
+    }
   })
 
   // Wrapper pour setView qui met à jour l'URL
