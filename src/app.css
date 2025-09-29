@@ -4,6 +4,7 @@
   --color-bg: #f2f2f2;
   --color-primary: #4088cf;
   --color-white: #fff;
+  --color-border: #ccc;
   --color-secondary: #e84855;
   --color-tertiary: #70cbe6;
   --color-text: #000;
@@ -16,4 +17,141 @@
   --color-warning: #ffc107;
   --color-discord: #5468ff;
   --color-discord-hover: #656c85cc;
+}
+
+@layer base {
+  html {
+    font-size: 14px;
+  }
+
+  button {
+    @apply py-1 px-2 cursor-pointer outline-none bg-primary rounded p-1 hover:bg-primary/80 text-white border border-primary;
+  }
+
+  button:hover {
+    @apply bg-white text-primary border-primary;
+  }
+
+  button:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  button.secondary {
+    @apply bg-secondary hover:bg-secondary/80 text-white;
+  }
+
+  button.secondary:disabled {
+    @apply cursor-not-allowed opacity-50 bg-secondary;
+  }
+
+  button.cancel {
+    @apply border-primary bg-bg hover:border-secondary text-primary hover:text-secondary;
+  }
+
+  button.cancel:disabled {
+    @apply cursor-not-allowed opacity-50 bg-gray-500;
+  }
+
+  button.headless {
+    @apply border-none bg-transparent p-0 text-primary;
+  }
+
+  select,
+  input[type='datetime-local'],
+  input[type='date'],
+  input[type='time'] {
+    @apply border border-border focus:border-primary rounded p-1 cursor-pointer text-primary bg-white;
+    width: max-content !important;
+    min-width: fit-content;
+  }
+
+  select,
+  ::picker(select) {
+    appearance: base-select;
+  }
+
+  select option::checkmark {
+    @apply hidden;
+  }
+
+  select option {
+    @apply cursor-pointer flex flex-col gap-2 items-start p-2 text-primary;
+  }
+
+  select::picker(select) {
+    @apply my-1 rounded-md border border-border focus:border-primary bg-white shadow-lg;
+  }
+
+  select option:focus {
+    @apply opacity-50;
+  }
+
+  select option:hover {
+    @apply bg-primary text-white transform  cursor-pointer;
+  }
+
+  textarea {
+    @apply border outline-none  border-border focus:border-primary rounded p-1 cursor-pointer text-primary bg-white min-w-full;
+    resize: none;
+  }
+
+  input {
+    @apply border outline-none  border-border focus:border-primary rounded p-1 cursor-pointer text-primary bg-white min-w-full;
+  }
+}
+
+@layer components {
+  .toast-enter {
+    @apply transform translate-x-full opacity-0;
+  }
+
+  .toast-enter-active {
+    @apply transform translate-x-0 opacity-100 transition-all duration-300 ease-out;
+  }
+
+  .toast-exit {
+    @apply transform translate-x-0 opacity-100;
+  }
+
+  .toast-exit-active {
+    @apply transform translate-x-full opacity-0 transition-all duration-300 ease-in;
+  }
+
+  .toast-slide-up {
+    @apply transform translate-y-full opacity-0;
+  }
+
+  .toast-slide-up-active {
+    @apply transform translate-y-0 opacity-100 transition-all duration-300 ease-out;
+  }
+}
+
+@layer components {
+  .html {
+    @apply max-w-[800px] mx-auto;
+  }
+
+  .html img {
+    @apply max-w-[500px] h-auto mx-auto m-2;
+  }
+
+  h1 {
+    @apply text-2xl font-bold  mb-6 mt-4;
+  }
+
+  h2 {
+    @apply text-xl font-bold mb-6 mt-4;
+  }
+
+  h3 {
+    @apply text-lg font-bold  mb-6 mt-4;
+  }
+
+  h4 {
+    @apply text-base font-bold  mb-6 mt-4;
+  }
+
+  p {
+    @apply mb-6;
+  }
 }
