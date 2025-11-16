@@ -11,13 +11,22 @@ export const menuEntries: MenuEntry[] = [
     label: 'Musée',
     href: '/museum',
     roles: ['public'],
-    entries: [{
-      label: 'horaires',
-      href: '/museum/schedules',
-    }, {
-      label: 'tarifs',
-      href: '/museum/prices',
-    }],
+    entries: [
+      {
+        label: 'Capacité',
+        href: '/museum/capacity',
+      },
+      {
+        label: 'Horaires',
+        href: '/museum/schedules',
+      }, {
+        label: 'Tarifs',
+        href: '/museum/prices',
+      }, {
+        label: 'Visiteurs',
+        href: '/museum/visitors',
+      }
+    ],
   },
   {
     label: 'Événements',

@@ -94,3 +94,50 @@ export type ScheduleException = Schedule & {
   endDate: string
   dayOfWeek: null
 }
+
+/**
+ * Horaire simplifié par jour de la semaine (pour l'affichage)
+ */
+export interface DaySchedule {
+  id: string
+  dayOfWeek: DayOfWeek
+  startTime: string
+  endTime: string
+}
+
+/**
+ * Type pour les données de l'API (snake_case)
+ */
+export interface ScheduleAPIResponse {
+  id: string
+  day_of_week: DayOfWeek | null
+  start_time: string
+  end_time: string
+  audience_type: AudienceType
+  start_date: string | null
+  end_date: string | null
+  is_exception: boolean
+  is_closed: boolean
+  description: string | null
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * Type de retour du contrôleur Schedule
+ */
+export interface ScheduleCtrlReturn {
+  // État
+  isLoading: () => boolean
+  schedules: () => Record<DayOfWeek, DaySchedule>
+  editingDay: () => DayOfWeek | null
+  editValues: () => { startTime: string; endTime: string }
+
+  // Actions
+  startEdit: (dayOfWeek: DayOfWeek) => void
+  cancelEdit: () => void
+  saveEdit: (dayOfWeek: DayOfWeek) => Promise<void>
+  updateEditValue: (field: 'startTime' | 'endTime', value: string) => void
+  getSchedules: () => Promise<void>
+  deleteSchedule: (dayOfWeek: DayOfWeek) => Promise<void>
+}

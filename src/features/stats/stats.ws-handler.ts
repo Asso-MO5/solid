@@ -6,6 +6,7 @@ import { setStats } from "./stats.store";
 
 const url = {
   current_visitors: `/museum/capacity/current`,
+  tickets_stats: '/museum/tickets/stats'
 }
 
 
@@ -23,6 +24,6 @@ export const statsWsHandler = async (room: keyof typeof stats) => {
   }
 
   const data = await response.json();
-  setStats('current_visitors', data[room]);
+  setStats(room, data[room]);
 
 }

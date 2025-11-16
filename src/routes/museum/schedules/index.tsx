@@ -1,5 +1,4 @@
 import { Schedules } from "~/features/schedules/Schedules"
-import { SchedulesModal } from "~/features/schedules/schedules.modal"
 
 const SchedulesPage = () => {
   return (
@@ -9,10 +8,6 @@ const SchedulesPage = () => {
           <div class="flex items-center gap-2">
             <h1 class="m-0">Horaires</h1>
           </div>
-
-        </div>
-        <div class="flex items-center md:gap-4 gap-2 flex-col md:flex-row">
-          <SchedulesModal title="Ajouter des horaires" schedules={[]} onSubmit={() => { }} />
         </div>
       </header>
       <Schedules />
