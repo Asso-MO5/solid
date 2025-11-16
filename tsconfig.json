@@ -4,14 +4,17 @@
     "esModuleInterop": true,
     "strict": true,
     "target": "ESNext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "jsxImportSource": "solid-js",
     "jsx": "preserve",
     "types": ["vite/client", "@solidjs/start/env"],
     "baseUrl": "./",
     "paths": {
-      "~/*": ["./src/*"]
-    }
+      "~/*": ["./src/*"],
+      "~": ["./src"]
+    },
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   }
 }
