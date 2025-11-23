@@ -95,8 +95,7 @@ export const Prices = () => {
                 >
                   {/* Mode édition */}
                   <div class="flex flex-col gap-3 w-full">
-                    <div class="flex flex gap-6">
-
+                    <div class="flex gap-6">
                       <div class="flex justify-between gap-3 w-full">
                         <div class="grid grid-cols-3 gap-3">
 
@@ -109,7 +108,7 @@ export const Prices = () => {
                               type="number"
                               step="0.10"
                               min="0"
-                              value={ctrl.editValues().amount || ''}
+                              value={ctrl.editValues().amount ?? 0}
                               onInput={(e) => ctrl.updateEditValue('amount', parseFloat(e.currentTarget.value) || 0)}
                               class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary w-24"
                             />

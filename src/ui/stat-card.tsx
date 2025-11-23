@@ -1,5 +1,3 @@
-import { Show } from "solid-js";
-
 type StatCardProps = {
 
   title: string;
