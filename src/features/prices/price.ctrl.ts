@@ -243,6 +243,53 @@ export const usePrices = () => {
     }
   }
 
+  const move = async (priceId: string, direction: 'up' | 'down') => {
+
+    const priceIds = prices().map(p => p.id)
+    const index = priceIds.indexOf(priceId)
+    if (index === -1) {
+      toast.error('Erreur', 'Tarif non trouvé.')
+      return
+    }
+
+    if (direction === 'up') {
+      priceIds[index] = priceIds[index - 1]
+      priceIds[index - 1] = priceId
+    }
+
+    if (direction === 'down') {
+      priceIds[index] = priceIds[index + 1]
+      priceIds[index + 1] = priceId
+    }
+
+    setPrices(prev => prev.map(p => {
+      const newIndex = priceIds.indexOf(p.id)
+      return {
+        ...p,
+        position: newIndex
+      }
+    }))
+    try {
+
+      await fetch(`${clientEnv.VITE_OCELOT_URL}/museum/prices/reorder`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          price_ids: priceIds,
+        }),
+      })
+    }
+    catch (error) {
+      toast.error('Erreur', 'Impossible de déplacer le prix.')
+      console.error(error)
+    }
+    finally {
+      setIsLoading(false)
+    }
+  }
 
   return {
     isLoading,
@@ -257,6 +304,7 @@ export const usePrices = () => {
     updateTranslation,
     deletePrice,
     getPrices,
-    upsertPrice
+    upsertPrice,
+    move
   }
 }

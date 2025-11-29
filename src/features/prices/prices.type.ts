@@ -8,6 +8,7 @@ export type Price = {
   end_date: string
   is_active: boolean
   requires_proof: boolean
+  position: number
   translations?: {
     fr?: {
       name: string
