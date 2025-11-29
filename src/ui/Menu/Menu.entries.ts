@@ -1,4 +1,4 @@
-import type { MenuEntry } from "./Menu.types";
+import type { MenuEntry } from './Menu.types'
 
 export const menuEntries: MenuEntry[] = [
   {
@@ -19,13 +19,19 @@ export const menuEntries: MenuEntry[] = [
       {
         label: 'Horaires',
         href: '/museum/schedules',
-      }, {
+      },
+      {
         label: 'Tarifs',
         href: '/museum/prices',
-      }, {
+      },
+      {
         label: 'Visiteurs',
         href: '/museum/visitors',
-      }
+      },
+      {
+        label: 'Validation des billets',
+        href: '/museum/entries',
+      },
     ],
   },
   {
@@ -38,5 +44,5 @@ export const menuEntries: MenuEntry[] = [
         href: '/cal',
       },
     ],
-  }
+  },
 ]

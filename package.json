@@ -51,6 +51,7 @@
     "dotenv": "^17.2.3",
     "editorjs-html": "^4.0.5",
     "postcss": "^8.4.40",
+    "qrcode-reader": "^1.0.4",
     "solid-js": "^1.9.5",
     "tailwindcss": "^4.1.13",
     "vinxi": "^0.5.7",
