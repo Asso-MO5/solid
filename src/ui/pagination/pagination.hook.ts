@@ -1,41 +1,108 @@
-import { createSignal } from "solid-js";
-import { onMount } from "solid-js";
+import { createEffect, createSignal, onCleanup } from "solid-js"
 
-export const usePagination = (onChange: (page: number, limit: number) => void) => {
-  const [page, setPage] = createSignal(1);
-  const [limit, setLimit] = createSignal(50);
+interface UsePaginationProps {
+  currentPage: number
+  totalPages: number
+  limit?: number
+  isLoading?: boolean
+  onPageChange: (page: number) => void
+  onLimitChange?: (limit: number) => void
+}
+
+export const usePagination = (props: UsePaginationProps) => {
+  const [pageInput, setPageInput] = createSignal<string>('')
+  const [limitInput, setLimitInput] = createSignal<string>('')
+
+  let pageDebounceTimer: ReturnType<typeof setTimeout> | null = null
+  let limitDebounceTimer: ReturnType<typeof setTimeout> | null = null
+
+  // Synchroniser les inputs avec les props
+  createEffect(() => {
+    const currentPage = props.currentPage
+    setPageInput(String(currentPage))
+  })
+
+  createEffect(() => {
+    const limit = props.limit || 500
+    setLimitInput(String(limit))
+  })
 
   const handlePageChange = (page: number) => {
-    setPage(page);
-    onChange(page, limit());
-    window.history.pushState({}, '', `?page=${page}&limit=${limit()}`);
+    const clamped = Math.min(props.totalPages, Math.max(1, page))
+    props.onPageChange(clamped)
   }
 
-  const handleLimitChange = (limit: number) => {
-    setLimit(limit);
-    onChange(page(), limit);
-    window.history.pushState({}, '', `?page=${page()}&limit=${limit}`);
+  const handlePageInputChange = (value: string) => {
+    setPageInput(value)
+
+    // Annuler le timer précédent
+    if (pageDebounceTimer) {
+      clearTimeout(pageDebounceTimer)
+    }
+
+    pageDebounceTimer = setTimeout(() => {
+      const numValue = parseInt(value, 10)
+      if (!isNaN(numValue) && numValue >= 1 && numValue <= props.totalPages) {
+        handlePageChange(numValue)
+      } else {
+        // Réinitialiser si valeur invalide
+        setPageInput(String(props.currentPage))
+      }
+    }, 500)
   }
 
-  onMount(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const pageParam = searchParams.get('page');
-    const limitParam = searchParams.get('limit');
-    if (pageParam) {
-      setPage(parseInt(pageParam));
+  const handleLimitInputChange = (value: string) => {
+    setLimitInput(value)
+
+    // Annuler le timer précédent
+    if (limitDebounceTimer) {
+      clearTimeout(limitDebounceTimer)
     }
-    if (limitParam) {
-      setLimit(parseInt(limitParam));
+
+    limitDebounceTimer = setTimeout(() => {
+      const numValue = parseInt(value, 10)
+      if (!isNaN(numValue) && numValue >= 1) {
+        props.onLimitChange?.(numValue)
+      } else {
+        // Réinitialiser si valeur invalide
+        setLimitInput(String(props.limit || 500))
+      }
+    }, 500)
+  }
+
+  const handlePageInputBlur = () => {
+    // Réinitialiser si valeur invalide au blur
+    const numValue = parseInt(pageInput(), 10)
+    if (isNaN(numValue) || numValue < 1 || numValue > props.totalPages) {
+      setPageInput(String(props.currentPage))
     }
-    onChange(page(), limit());
-    window.history.pushState({}, '', `?page=${page()}&limit=${limit()}`);
+  }
+
+  const handleLimitInputBlur = () => {
+    // Réinitialiser si valeur invalide au blur
+    const numValue = parseInt(limitInput(), 10)
+    if (isNaN(numValue) || numValue < 1) {
+      setLimitInput(String(props.limit || 500))
+    }
+  }
+
+  // Cleanup des timers
+  onCleanup(() => {
+    if (pageDebounceTimer) {
+      clearTimeout(pageDebounceTimer)
+    }
+    if (limitDebounceTimer) {
+      clearTimeout(limitDebounceTimer)
+    }
   })
 
   return {
-    page,
-    limit,
+    pageInput,
+    limitInput,
     handlePageChange,
-    handleLimitChange,
+    handlePageInputChange,
+    handleLimitInputChange,
+    handlePageInputBlur,
+    handleLimitInputBlur
   }
 }
-

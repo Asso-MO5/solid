@@ -25,12 +25,16 @@ export const menuEntries: MenuEntry[] = [
         href: '/museum/prices',
       },
       {
-        label: 'Visiteurs',
-        href: '/museum/visitors',
+        label: 'Tickets',
+        href: '/museum/tickets',
       },
       {
         label: 'Validation des billets',
         href: '/museum/entries',
+      },
+      {
+        label: 'Codes cadeaux',
+        href: '/museum/gift-codes',
       },
     ],
   },

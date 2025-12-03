@@ -22,8 +22,12 @@ export function ModalCtrl(): ModalCtrlReturn {
   }
 
   const close = () => {
-    setIsOpen(false)
+    // Sauvegarder le handler avant de nettoyer
     const closeHandler = onClose()
+    // Nettoyer immédiatement pour éviter les boucles
+    setOnClose(undefined)
+    setIsOpen(false)
+    // Appeler le handler après avoir nettoyé et fermé
     if (closeHandler) {
       closeHandler()
     }
