@@ -1,5 +1,6 @@
 import { Tabs } from "~/ui/tabs/Tabs"
 import { Schedule } from "./Schedule"
+import { SpecialPeriodsView } from "../special-periods"
 
 export const Schedules = () => {
 
@@ -13,9 +14,14 @@ export const Schedules = () => {
             content: () => <Schedule type="public" />
           },
           {
-            id: 'members-schedules',
-            label: 'Horaires membres',
-            content: () => <Schedule type="member" />
+            id: 'holiday',
+            label: 'Horaires Vacances',
+            content: () => <Schedule type="holiday" />
+          },
+          {
+            id: 'manage-holiday',
+            label: 'Gérer les vacances',
+            content: () => <SpecialPeriodsView />
           }
         ]} />
     </div>

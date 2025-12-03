@@ -1,7 +1,7 @@
 /**
  * Type d'audience pour les horaires
  */
-export type AudienceType = 'public' | 'member'
+export type AudienceType = 'public' | 'holiday' | 'member'
 
 /**
  * Jour de la semaine (0 = dimanche, 1 = lundi, ..., 6 = samedi)
