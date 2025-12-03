@@ -38,6 +38,7 @@ export const menuEntries: MenuEntry[] = [
       },
     ],
   },
+  /*
   {
     label: 'Événements',
     href: '/events',
@@ -49,4 +50,5 @@ export const menuEntries: MenuEntry[] = [
       },
     ],
   },
+  */
 ]
