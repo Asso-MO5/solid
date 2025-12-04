@@ -1,10 +1,15 @@
 import { GiftCodesView } from "~/features/gift-codes"
+import { useCan } from "~/features/auth/can.ctrl";
+import { Show } from "solid-js";
 
 const GiftCodesPage = () => {
+  const can = useCan({ admin: true })
   return (
-    <div class="h-full w-full">
-      <GiftCodesView />
-    </div>
+    <Show when={can()}>
+      <div class="h-full w-full">
+        <GiftCodesView />
+      </div>
+    </Show>
   )
 }
 

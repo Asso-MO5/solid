@@ -1,8 +1,13 @@
 import { TicketsView } from "~/features/tickets"
+import { useCan } from "~/features/auth/can.ctrl";
+import { Show } from "solid-js";
 
 const TicketsPage = () => {
+  const can = useCan({ admin: true })
   return (
-    <TicketsView />
+    <Show when={can()}>
+      <TicketsView />
+    </Show>
   )
 }
 

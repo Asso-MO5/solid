@@ -10,7 +10,7 @@ export const menuEntries: MenuEntry[] = [
   {
     label: 'Musée',
     href: '/museum',
-    roles: ['public'],
+    roles: ['museum', 'dev', "bureau"],
     entries: [
       {
         label: 'Capacité',

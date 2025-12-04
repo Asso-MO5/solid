@@ -4,7 +4,7 @@ import { EventView } from "~/features/events/event.view"
 
 export default function ViewEvent() {
   const params = useParams()
-  const { event, loading, error } = useEventCtrl(params.id)
+  const { event, loading, error } = useEventCtrl(params.id || '')
 
   return (
     <EventView
