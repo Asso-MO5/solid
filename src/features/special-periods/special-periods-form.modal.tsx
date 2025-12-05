@@ -7,14 +7,32 @@ interface SpecialPeriodsFormModalProps {
   onCancel: () => void
 }
 
+// Fonction pour convertir une date ISO en format YYYY-MM-DD pour les inputs date
+const formatDateForInput = (dateString?: string): string => {
+  if (!dateString) return ''
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return ''
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  } catch {
+    return ''
+  }
+}
+
 export const SpecialPeriodsFormModal = (props: SpecialPeriodsFormModalProps) => {
-  const [type, setType] = createSignal<CreatePeriodData['type']>(props.period?.type || 'holiday')
-  const [startDate, setStartDate] = createSignal<string>(props.period?.start_date || '')
-  const [endDate, setEndDate] = createSignal<string>(props.period?.end_date || '')
-  const [name, setName] = createSignal<string>(props.period?.name || '')
-  const [description, setDescription] = createSignal<string>(props.period?.description || '')
-  const [zone, setZone] = createSignal<string>(props.period?.zone || '')
-  const [isActive, setIsActive] = createSignal<boolean>(props.period?.is_active ?? true)
+  // eslint-disable-next-line solid/reactivity
+  const period = props.period
+
+  const [type, setType] = createSignal<CreatePeriodData['type']>(period?.type || 'holiday')
+  const [startDate, setStartDate] = createSignal<string>(formatDateForInput(period?.start_date))
+  const [endDate, setEndDate] = createSignal<string>(formatDateForInput(period?.end_date))
+  const [name, setName] = createSignal<string>(period?.name || '')
+  const [description, setDescription] = createSignal<string>(period?.description || '')
+  const [zone, setZone] = createSignal<string>(period?.zone || '')
+  const [isActive, setIsActive] = createSignal<boolean>(period?.is_active ?? true)
   const [isSubmitting, setIsSubmitting] = createSignal<boolean>(false)
   const [errors, setErrors] = createSignal<Record<string, string>>({})
 
@@ -37,9 +55,6 @@ export const SpecialPeriodsFormModal = (props: SpecialPeriodsFormModalProps) => 
       newErrors.endDate = "La date de fin doit être postérieure à la date de début."
     }
 
-    if (type() === 'holiday' && !zone().trim()) {
-      newErrors.zone = "La zone est requise pour les périodes de vacances."
-    }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -63,7 +78,6 @@ export const SpecialPeriodsFormModal = (props: SpecialPeriodsFormModalProps) => 
         zone: zone().trim(),
         is_active: isActive()
       })
-      // La modale sera fermée par onSave, pas besoin d'appeler onCancel
     } catch (error) {
       // L'erreur est déjà gérée dans le contrôleur
     } finally {
@@ -71,7 +85,6 @@ export const SpecialPeriodsFormModal = (props: SpecialPeriodsFormModalProps) => 
     }
   }
 
-  // Calculer la date minimale (aujourd'hui)
   const today = new Date().toISOString().split('T')[0]
 
   return (
@@ -168,7 +181,7 @@ export const SpecialPeriodsFormModal = (props: SpecialPeriodsFormModalProps) => 
       <Show when={type() === 'holiday'}>
         <div class="flex flex-col gap-1">
           <label for="zone" class="text-sm font-medium text-gray-700">
-            Zone <span class="text-red-500">*</span>
+            Zone
           </label>
           <input
             id="zone"
