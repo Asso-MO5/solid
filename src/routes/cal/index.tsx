@@ -7,12 +7,11 @@ import { CalCtrl } from "~/ui/Cal/Cal.ctrl"
 import { EventsCtrl } from "~/features/events/events.ctrl"
 import { Show, createEffect, createSignal, onMount } from "solid-js"
 import { useSearchParams } from "@solidjs/router"
-import type { CalendarEvent } from "~/ui/Cal/Cal.types"
 import { auth } from "~/features/auth/auth.store"
 
 const AdminEventsList = () => {
   const eventsCtrl = EventsCtrl()
-  const { events, loading, getEvents } = eventsCtrl
+  const { events, calendarDays: daysInfo, loading, getEvents } = eventsCtrl
   const calendar = CalCtrl()
   const [previousDate, setPreviousDate] = createSignal<Date | null>(null)
   const [searchParams] = useSearchParams()
@@ -30,6 +29,19 @@ const AdminEventsList = () => {
         window.history.replaceState({}, '', url.toString())
         setHighlightedEventId(null)
       }, 3000) // 3 secondes de surbrillance
+    }
+  })
+
+  // Charger les événements au montage initial
+  onMount(() => {
+    getEvents(calendar.view(), calendar.selectedDate())
+  })
+
+  // Synchroniser les informations des jours avec le calendrier
+  createEffect(() => {
+    const info = daysInfo()
+    if (info.size > 0) {
+      calendar.setDaysInfo(info)
     }
   })
 
@@ -93,7 +105,7 @@ const AdminEventsList = () => {
           <Show when={!loading()}>
             <Cal
               canCreateEvent={auth.roles?.includes('admin')}
-              items={events() as unknown as CalendarEvent[]}
+              items={events()}
               highlightedEventId={highlightedEventId()}
               onEventCreated={() => {
                 getEvents(calendar.view(), calendar.selectedDate())

@@ -9,6 +9,27 @@ export interface CalendarDay {
   isToday: boolean
   isSelected: boolean
   items: CalendarEvent[]
+  isOpen?: boolean
+  openingHours?: Array<{
+    start_time: string
+    end_time: string
+    audience_type: string
+    description: string
+  }>
+  holidayPeriods?: Array<{
+    id: string
+    name: string
+    start_date: string
+    end_date: string
+    zone: string
+  }>
+  closurePeriods?: Array<{
+    id: string
+    name: string
+    start_date: string
+    end_date: string
+    zone: string
+  }>
 }
 
 export interface CalendarEvent {
@@ -32,6 +53,30 @@ export interface CalendarItem {
   [key: string]: unknown
 }
 
+export interface CalendarDayInfo {
+  is_open: boolean
+  opening_hours: Array<{
+    start_time: string
+    end_time: string
+    audience_type: string
+    description: string
+  }>
+  holiday_periods: Array<{
+    id: string
+    name: string
+    start_date: string
+    end_date: string
+    zone: string
+  }>
+  closure_periods: Array<{
+    id: string
+    name: string
+    start_date: string
+    end_date: string
+    zone: string
+  }>
+}
+
 export interface CalendarCtrlReturn {
   view: Accessor<CalendarView>
   selectedDate: Accessor<Date>
@@ -39,6 +84,7 @@ export interface CalendarCtrlReturn {
   setView: (view: CalendarView) => void
   setSelectedDate: (date: Date) => void
   setItems: (items: CalendarEvent[]) => void
+  setDaysInfo: (daysInfo: Map<string, CalendarDayInfo>) => void
 
   goToPrevious: () => void
   goToNext: () => void

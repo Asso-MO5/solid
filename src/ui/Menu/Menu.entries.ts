@@ -38,11 +38,10 @@ export const menuEntries: MenuEntry[] = [
       },
     ],
   },
-  /*
   {
     label: 'Événements',
     href: '/events',
-    roles: ['public'],
+    roles: ['membres mo5'],
     entries: [
       {
         label: 'Calendrier',
@@ -50,5 +49,5 @@ export const menuEntries: MenuEntry[] = [
       },
     ],
   },
-  */
+
 ]

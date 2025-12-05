@@ -1,14 +1,8 @@
-import type { CalendarEvent, CalendarView } from "./Cal.types"
+import type { CalendarEvent, CalendarView, CalendarDay } from "./Cal.types"
 import type { JSX } from "solid-js"
 
 export interface CalDayProps {
-  day: {
-    date: Date
-    isCurrentMonth: boolean
-    isToday: boolean
-    isSelected: boolean
-    items: CalendarEvent[]
-  }
+  day: CalendarDay
   view: CalendarView
   onDayClick: (day: Date, hour?: number) => void
   onItemClick?: (event: CalendarEvent) => void

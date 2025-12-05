@@ -105,17 +105,28 @@ export const CalDay = (props: CalDayProps) => {
         fallback={
           /* Vue desktop */
           <div
-            class="min-h-24 p-2 border border-gray-200 rounded-sm cursor-pointer hover:bg-gray-50 bg-white
+            class="min-h-24 p-2 border rounded-sm cursor-pointer hover:bg-gray-50 bg-white
                    data-[current-month=false]:text-gray-400 data-[current-month=false]:bg-bg 
                    data-[today=true]:bg-blue-50 data-[today=true]:border-primary 
-                   data-[selected=true]:bg-blue-100 data-[selected=true]:border-primary"
+                   data-[selected=true]:bg-blue-100 data-[selected=true]:border-primary
+                   data-[open=true]:border-green-300 data-[open=true]:bg-green-50/30
+                   data-[open=false]:border-red-300 data-[open=false]:bg-red-50/30"
             data-current-month={props.day.isCurrentMonth}
             data-today={props.day.isToday}
             data-selected={props.day.isSelected}
+            data-open={props.day.isOpen}
             onClick={handleDayClick}
           >
-            <div class="text-sm font-medium mb-1">
-              {props.formatDate(props.day.date)}
+            <div class="flex items-center justify-between mb-1">
+              <div class="text-sm font-medium">
+                {props.formatDate(props.day.date)}
+              </div>
+              <Show when={props.day.isOpen !== undefined}>
+                <div
+                  class={`w-2 h-2 rounded-full ${props.day.isOpen ? 'bg-green-500' : 'bg-red-500'}`}
+                  title={props.day.isOpen ? 'Ouvert' : 'Fermé'}
+                />
+              </Show>
             </div>
 
             <div class="space-y-1">
@@ -155,16 +166,26 @@ export const CalDay = (props: CalDayProps) => {
           class="aspect-square rounded-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 
                  data-[current-month=false]:text-gray-400 data-[current-month=false]:bg-bg 
                  data-[today=true]:bg-blue-50 data-[today=true]:border-primary 
-                 data-[selected=true]:bg-blue-100 data-[selected=true]:border-primary"
+                 data-[selected=true]:bg-blue-100 data-[selected=true]:border-primary
+                 data-[open=true]:border-green-300 data-[open=true]:bg-green-50/30
+                 data-[open=false]:border-red-300 data-[open=false]:bg-red-50/30"
           data-current-month={props.day.isCurrentMonth}
           data-today={props.day.isToday}
           data-selected={props.day.isSelected}
+          data-open={props.day.isOpen}
           onClick={handleDayClick}
         >
           {/* Numéro du jour */}
           <div class="text-sm font-medium mb-1">
             {props.formatDate(props.day.date)}
           </div>
+          {/* Indicateur ouvert/fermé */}
+          <Show when={props.day.isOpen !== undefined}>
+            <div
+              class={`w-2 h-2 rounded-full mb-1 ${props.day.isOpen ? 'bg-green-500' : 'bg-red-500'}`}
+              title={props.day.isOpen ? 'Ouvert' : 'Fermé'}
+            />
+          </Show>
 
           {/* Ronds pour les événements */}
           <div class="flex flex-wrap justify-center gap-1">

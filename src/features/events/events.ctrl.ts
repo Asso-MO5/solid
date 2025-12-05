@@ -1,7 +1,10 @@
-import { createSignal, onMount } from "solid-js"
-import type { Event } from "~/database/schema"
+import { createSignal } from "solid-js"
 import { ToastCtrl } from "~/ui/Toast"
 import type { EventCategory, EventStatus, AvailableRole } from "./events.const"
+import { clientEnv } from "~/env/client"
+import type { CalendarResponse, CalendarEventApi } from "./events.types"
+import type { CalendarEvent, CalendarDayInfo } from "~/ui/Cal/Cal.types"
+import { getCategoryColor } from "./events.utils"
 
 // Types locaux pour la feature events
 export type CalendarView = 'month' | 'week' | 'day' | 'list'
@@ -21,7 +24,8 @@ export const EventsCtrl = () => {
   const toast = ToastCtrl()
   const [loading, setLoading] = createSignal(false)
   const [error, setError] = createSignal<string | null>(null)
-  const [events, setEvents] = createSignal<Event[]>([])
+  const [events, setEvents] = createSignal<CalendarEvent[]>([])
+  const [calendarDays, setCalendarDays] = createSignal<Map<string, CalendarDayInfo>>(new Map())
 
   // Cache pour éviter les requêtes en double
   let lastRequestParams: string | null = null
@@ -32,34 +36,73 @@ export const EventsCtrl = () => {
     const end = new Date(selectedDate)
 
     switch (view) {
-      case 'month':
-        // Mois courant + 1 mois avant/après
-        start.setMonth(start.getMonth() - 1, 1)
-        end.setMonth(end.getMonth() + 2, 0) // Dernier jour du mois suivant
+      case 'month': {
+        // L'API gère automatiquement les jours avant/après, on envoie juste le premier jour du mois
+        const year = selectedDate.getFullYear()
+        const month = selectedDate.getMonth()
+        start.setFullYear(year, month, 1)
+        // L'API retournera les jours nécessaires, on peut mettre la même date pour end
+        end.setFullYear(year, month, 1)
         break
-      case 'week':
-        // Semaine courante + 1 semaine avant/après
-        const dayOfWeek = start.getDay()
+      }
+      case 'week': {
+        // Semaine courante : remonter au lundi
+        const dayOfWeek = start.getDay() === 0 ? 7 : start.getDay()
         const monday = new Date(start)
         monday.setDate(start.getDate() - dayOfWeek + 1)
-        start.setTime(monday.getTime() - 7 * 24 * 60 * 60 * 1000) // -1 semaine
-        end.setTime(monday.getTime() + 20 * 24 * 60 * 60 * 1000) // +3 semaines
+        start.setTime(monday.getTime())
+        // Fin : dimanche de la semaine
+        end.setTime(monday.getTime())
+        end.setDate(monday.getDate() + 6)
         break
+      }
       case 'day':
-        // Jour courant + 3 jours avant/après
-        start.setDate(start.getDate() - 3)
-        end.setDate(end.getDate() + 3)
+        // Jour courant uniquement
+        start.setHours(0, 0, 0, 0)
+        end.setHours(23, 59, 59, 999)
         break
-      case 'list':
-        // Mois courant + 1 mois avant/après (comme month)
-        start.setMonth(start.getMonth() - 1, 1)
-        end.setMonth(end.getMonth() + 2, 0)
+      case 'list': {
+        // Mois courant : du 1er au dernier jour du mois
+        const year = selectedDate.getFullYear()
+        const month = selectedDate.getMonth()
+        start.setFullYear(year, month, 1)
+        end.setFullYear(year, month + 1, 0) // Dernier jour du mois
         break
+      }
     }
 
     return {
       start: start.toISOString().split('T')[0], // Format YYYY-MM-DD
       end: end.toISOString().split('T')[0]
+    }
+  }
+
+  // Transformer un événement de l'API en CalendarEvent
+  const transformEvent = (apiEvent: CalendarEventApi): CalendarEvent => {
+    // Construire la date de début avec l'heure si disponible
+    const startDateStr = apiEvent.start_date
+    const startTimeStr = apiEvent.start_time || '00:00:00'
+    const startDateTime = `${startDateStr}T${startTimeStr}`
+
+    // Construire la date de fin avec l'heure si disponible
+    const endDateStr = apiEvent.end_date
+    const endTimeStr = apiEvent.end_time || '23:59:59'
+    const endDateTime = `${endDateStr}T${endTimeStr}`
+
+    // Utiliser le titre français par défaut, ou anglais si français non disponible
+    const title = apiEvent.public_title_fr || apiEvent.public_title_en || 'Sans titre'
+    const description = apiEvent.public_description_fr || apiEvent.public_description_en || undefined
+
+    return {
+      id: apiEvent.id,
+      title,
+      description,
+      startDate: new Date(startDateTime),
+      endDate: new Date(endDateTime),
+      category: apiEvent.category as CalendarEvent['category'],
+      status: apiEvent.status as CalendarEvent['status'],
+      color: getCategoryColor(apiEvent.category),
+      // Les autres champs peuvent être ajoutés si nécessaire
     }
   }
 
@@ -73,10 +116,11 @@ export const EventsCtrl = () => {
     // Construire l'URL avec les paramètres de date
     const dateRange = getDateRange(view, selectedDate)
     const params = new URLSearchParams({
-      start: dateRange.start,
-      end: dateRange.end
+      start_date: dateRange.start,
+      end_date: dateRange.end,
+      view: view
     })
-    const url = `/api/events?${params.toString()}`
+    const url = `${clientEnv.VITE_OCELOT_URL}/museum/calendar?${params.toString()}`
     const requestKey = `${view}-${dateRange.start}-${dateRange.end}`
 
     // Éviter les requêtes en double
@@ -89,26 +133,45 @@ export const EventsCtrl = () => {
     setLoading(true)
     setError(null)
     try {
-
       const response = await fetch(url, {
         method: 'GET',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
       })
 
-      const eventsData = await response.json()
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`)
+      }
 
-      // Convertir les chaînes de dates en objets Date
-      const eventsWithDates = eventsData.map((event: Event) => ({
-        ...event,
-        startDate: new Date(event.startDate),
-        endDate: new Date(event.endDate)
-      }))
+      const calendarData: CalendarResponse = await response.json()
 
-      setEvents(eventsWithDates)
+      // Extraire tous les événements de tous les jours
+      const allEvents: CalendarEvent[] = []
+      const daysMap = new Map<string, CalendarDayInfo>()
+
+      calendarData.days.forEach(day => {
+        // Transformer et stocker les informations du jour
+        const dayInfo: CalendarDayInfo = {
+          is_open: day.is_open,
+          opening_hours: day.opening_hours,
+          holiday_periods: day.holiday_periods,
+          closure_periods: day.closure_periods
+        }
+        daysMap.set(day.date, dayInfo)
+
+        // Extraire les événements
+        day.events.forEach(apiEvent => {
+          allEvents.push(transformEvent(apiEvent))
+        })
+      })
+
+      setEvents(allEvents)
+      setCalendarDays(daysMap)
     } catch (error) {
       const msg = typeof error === 'string' ? error : error instanceof Error ? error.message : 'Une erreur est survenue'
+      setError(msg)
       toast.error('Erreur', msg)
     }
     finally {
@@ -116,8 +179,7 @@ export const EventsCtrl = () => {
     }
   }
 
-  const createEvent = async (event: EventCreateData) => {
-
+  const createEvent = async (event: EventCreateData, view?: CalendarView, selectedDate?: Date) => {
     setLoading(true)
     setError(null)
     try {
@@ -128,8 +190,10 @@ export const EventsCtrl = () => {
         },
         body: JSON.stringify(event)
       })
-      getEvents()
-
+      // Recharger les événements après création
+      if (view && selectedDate) {
+        await getEvents(view, selectedDate)
+      }
     } catch (error) {
       setError(typeof error === 'string' ? error : error instanceof Error ? error.message : 'Une erreur est survenue')
       toast.error('Erreur', 'Une erreur est survenue')
@@ -137,17 +201,13 @@ export const EventsCtrl = () => {
     finally {
       setLoading(false)
     }
-
   }
-
-  onMount(() => {
-    getEvents()
-  })
 
   return {
     getEvents,
     createEvent,
     events,
+    calendarDays,
     loading,
     error
   }

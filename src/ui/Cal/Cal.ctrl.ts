@@ -1,10 +1,11 @@
 import { createSignal, createMemo, onMount, onCleanup, createEffect } from "solid-js"
 import { useLocation } from "@solidjs/router"
-import type { CalendarView, CalendarDay, CalendarEvent, CalendarCtrlReturn } from "./Cal.types"
+import type { CalendarView, CalendarDay, CalendarEvent, CalendarCtrlReturn, CalendarDayInfo } from "./Cal.types"
 
 const [view, setView] = createSignal<CalendarView>('month')
 const [selectedDate, setSelectedDate] = createSignal<Date>(new Date())
 const [items, setItems] = createSignal<CalendarEvent[]>([])
+const [daysInfo, setDaysInfo] = createSignal<Map<string, CalendarDayInfo>>(new Map())
 
 // Fonctions pour gérer les query parameters
 const getQueryParams = () => {
@@ -236,10 +237,19 @@ export function CalCtrl(): CalendarCtrlReturn {
   }
 
 
-  // Génération des jours du calendrier avec items
+  // Fonction pour formater une date en YYYY-MM-DD
+  const formatDateKey = (date: Date): string => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  // Génération des jours du calendrier avec items et infos du musée
   const calendarDays = createMemo((): CalendarDay[] => {
     const current = selectedDate()
     const today = new Date()
+    const infoMap = daysInfo()
 
     let days: CalendarDay[] = []
 
@@ -251,11 +261,20 @@ export function CalCtrl(): CalendarCtrlReturn {
       days = generateDayView(current, today)
     }
 
-    // Ajouter les items à chaque jour
-    return days.map(day => ({
-      ...day,
-      items: getItemsForDay(day.date)
-    }))
+    // Ajouter les items et les infos du musée à chaque jour
+    return days.map(day => {
+      const dateKey = formatDateKey(day.date)
+      const dayInfo = infoMap.get(dateKey)
+
+      return {
+        ...day,
+        items: getItemsForDay(day.date),
+        isOpen: dayInfo?.is_open,
+        openingHours: dayInfo?.opening_hours,
+        holidayPeriods: dayInfo?.holiday_periods,
+        closurePeriods: dayInfo?.closure_periods
+      }
+    })
   })
 
   // Données calculées
@@ -283,6 +302,7 @@ export function CalCtrl(): CalendarCtrlReturn {
     setView: setViewWithURL,
     setSelectedDate: setSelectedDateWithURL,
     setItems,
+    setDaysInfo,
 
     // Navigation
     goToPrevious,
