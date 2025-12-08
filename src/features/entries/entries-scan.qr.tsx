@@ -230,6 +230,11 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
                   <div class="text-sm text-gray-600 mt-1">
                     {result?.qr_code || ''}
                   </div>
+                  <Show when={result?.notes?.guided_tour}>
+                    <div class="text-sm text-blue-600 mt-1">
+                      Visite guidée
+                    </div>
+                  </Show>
                   <Show when={result?.notes?.pricing_info?.requires_proof}>
                     <div class="text-sm text-accent mt-1">
                       {result?.notes?.pricing_info?.translations?.fr?.description}

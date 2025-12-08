@@ -41,12 +41,11 @@ export const useEntries = (): EntriesCtrlReturn => {
 
       const data = await response.json()
 
-      setTickets(Array.isArray(data) ? data.map(d => {
-
+      setTickets(Array.isArray(data.tickets) ? data.tickets.map((d: { notes: string }) => {
         return {
           ...d,
           notes: d.notes ? JSON.parse(d.notes) : null
-        }
+        } as Ticket
       }) : [])
     } catch (error) {
       toast.error('Erreur', 'Impossible de charger les billets.')
@@ -66,7 +65,6 @@ export const useEntries = (): EntriesCtrlReturn => {
   const filteredTickets = createMemo(() => {
     let result = [...tickets()]
     const currentFilter = filter()
-
     // Filtre par recherche (nom, email, QR code)
     if (currentFilter.search) {
       const searchLower = currentFilter.search.toLowerCase()

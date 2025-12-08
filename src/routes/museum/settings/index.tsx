@@ -10,11 +10,13 @@ const CapacityPage = () => {
 
   const { setting: slotSetting, setSetting: setSlotSetting, saveSetting: saveSlotSetting, description: slotDescription, setDescription: setSlotDescription } = settingNumCtrl('slot_capacity')
 
+  const { setting: guidedVisitPriceSetting, setSetting: setGuidedVisitPriceSetting, saveSetting: saveGuidedVisitPriceSetting, description: guidedVisitPriceDescription, setDescription: setGuidedVisitPriceDescription } = settingNumCtrl('guided_tour_price')
+
   return (
     <Show when={can()}>
       <div class="h-full w-full  relative overflow-y-auto ">
         <header class="flex justify-between items-center gap2">
-          <h1 class="text-2xl font-bold">Capacité</h1>
+          <h1 class="text-2xl font-bold">Réglages</h1>
           <div class="flex items-center justify-end gap-2">
             <SettingNumModal
               title="Modifier la capacité"
@@ -32,7 +34,15 @@ const CapacityPage = () => {
               description={slotDescription()}
               setDescription={(description: string) => setSlotDescription(description)}
             />
-          </div>
+            <SettingNumModal
+              title="Modifier le prix de la visite guidée"
+              isFloat={true}
+              value={guidedVisitPriceSetting()}
+              setValue={(value: number) => setGuidedVisitPriceSetting(value)}
+              onClose={(onClose: () => void) => saveGuidedVisitPriceSetting(onClose)}
+              description={guidedVisitPriceDescription()}
+              setDescription={(description: string) => setGuidedVisitPriceDescription(description)}
+            />          </div>
         </header>
         <div class="italic text-gray-500 text-sm my-3">
           {description()}
@@ -45,6 +55,12 @@ const CapacityPage = () => {
         </div>
         <div class="flex items-center gap-2">
           <span class="font-bold text-5xl text-amber-500">{slotSetting() || 0} </span> heure{slotSetting() > 1 ? 's' : ''}
+        </div>
+        <div class="italic text-gray-500 text-sm my-3">
+          {guidedVisitPriceDescription()}
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-5xl text-amber-500">{guidedVisitPriceSetting() || 0} </span> €
         </div>
       </div >
     </Show>

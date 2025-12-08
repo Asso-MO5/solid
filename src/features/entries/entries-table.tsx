@@ -87,6 +87,7 @@ export const EntriesTable = (props: EntriesTableProps) => {
                 {SortIcon('status')}
               </div>
             </th>
+            <th class="px-4 py-3 text-left">Visite guidée</th>
             <th
               class="px-4 py-3 text-left cursor-pointer hover:bg-gray-50"
               onClick={() => handleSort('slot_start_time')}
@@ -134,6 +135,13 @@ export const EntriesTable = (props: EntriesTableProps) => {
                     <span class={`px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(ticket.status)}`}>
                       {getStatusLabel(ticket.status)}
                     </span>
+                  </td>
+                  <td class="px-4 py-3">
+                    <Show when={ticket?.notes?.guided_tour}>
+                      <div class="text-sm text-blue-600 text-center">
+                        {ticket?.notes?.guided_tour ? 'Oui' : 'Non'}
+                      </div>
+                    </Show>
                   </td>
                   <td class="px-4 py-3">
                     {ticket?.slot_start_time} - {ticket?.slot_end_time}

@@ -19,7 +19,7 @@ export const settingNumCtrl = (settingName: string) => {
         },
       })
       const data = await response.json()
-      setSetting(data.value)
+      setSetting(Number(data.value))
       setHistory(data.value)
       setDescription(data.description)
       setDescriptionHistory(data.description)

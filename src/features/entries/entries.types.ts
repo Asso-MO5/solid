@@ -20,6 +20,8 @@ export interface Ticket {
 }
 
 export type ParseNote = {
+  guided_tour: boolean
+  guided_tour_price: number
   pricing_info: {
     price_name: string
     translations: {
