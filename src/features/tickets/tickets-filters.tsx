@@ -44,10 +44,9 @@ export const TicketsFilters = (props: TicketsFiltersProps) => {
               class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <option value="">Tous les statuts</option>
-              <option value="active">Actif</option>
+              <option value="paid">Payé</option>
               <option value="used">Utilisé</option>
               <option value="cancelled">Annulé</option>
-              <option value="refunded">Remboursé</option>
             </select>
           </div>
         </div>
