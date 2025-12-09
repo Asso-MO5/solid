@@ -30,10 +30,9 @@ export const EntriesView = () => {
               class="p-2"
             >
               <option value="">Tous les statuts</option>
-              <option value="active">Actif</option>
+              <option value="paid">Payé</option>
               <option value="used">Utilisé</option>
               <option value="cancelled">Annulé</option>
-              <option value="refunded">Remboursé</option>
             </select>
           </div>
         </div>
