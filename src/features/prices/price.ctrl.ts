@@ -35,8 +35,8 @@ export const usePrices = () => {
         throw new Error('Erreur lors du chargement des prix')
       }
 
-      const data = await response.json()
-      setPrices(data as Price[])
+      const {prices} = await response.json()
+      setPrices(prices as Price[])
     } catch (error) {
       toast.error('Erreur', 'Impossible de charger les prix.')
       console.error(error)
