@@ -14,6 +14,7 @@ export interface CalendarEventApi {
   status: string
   start_date: string
   end_date: string
+  paid_tickets_count: number
   start_time: string
   end_time: string
   location_type: string
@@ -61,6 +62,7 @@ export interface CalendarDayApi {
   events: CalendarEventApi[]
   holiday_periods: CalendarHolidayPeriod[]
   closure_periods: CalendarClosurePeriod[]
+  paid_tickets_count: number
 }
 
 export interface CalendarResponse {

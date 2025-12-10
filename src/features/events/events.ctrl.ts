@@ -159,7 +159,7 @@ export const EventsCtrl = () => {
           is_open: day.is_open,
           opening_hours: day.opening_hours,
           holiday_periods: day.holiday_periods,
-          closure_periods: day.closure_periods
+          closure_periods: day.closure_periods,
           paid_tickets_count: day.paid_tickets_count,
         }
         daysMap.set(day.date, dayInfo)

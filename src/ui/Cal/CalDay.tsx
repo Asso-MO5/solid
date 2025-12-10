@@ -122,9 +122,9 @@ export const CalDay = (props: CalDayProps) => {
                 {props.formatDate(props.day.date)}
               </div>
               <div class="flex items-center gap-2">
-                <Show when={props.day.paidTicketsCount !== undefined}>
+                <Show when={props.day.paid_tickets_count !== undefined}>
                   <div class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded px-2 py-0.5">
-                    {props.day.paidTicketsCount}
+                    {props.day.paid_tickets_count}
                   </div>
                 </Show>
                 <Show when={props.day.isOpen !== undefined}>
@@ -194,9 +194,9 @@ export const CalDay = (props: CalDayProps) => {
             />
           </Show>
           {/* Billets payés */}
-          <Show when={props.day.paidTicketsCount !== undefined}>
+          <Show when={props.day.paid_tickets_count !== undefined}>
             <div class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded px-2 py-0.5 mb-1">
-              {props.day.paidTicketsCount}
+              {props.day.paid_tickets_count}
             </div>
           </Show>
 

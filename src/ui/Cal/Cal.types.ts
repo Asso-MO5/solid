@@ -10,7 +10,7 @@ export interface CalendarDay {
   isSelected: boolean
   items: CalendarEvent[]
   isOpen?: boolean
-  paidTicketsCount?: number
+  paid_tickets_count?: number
   openingHours?: Array<{
     start_time: string
     end_time: string
