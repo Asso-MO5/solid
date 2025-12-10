@@ -147,6 +147,8 @@ export const EventsCtrl = () => {
 
       const calendarData: CalendarResponse = await response.json()
 
+
+
       // Extraire tous les événements de tous les jours
       const allEvents: CalendarEvent[] = []
       const daysMap = new Map<string, CalendarDayInfo>()
@@ -158,6 +160,7 @@ export const EventsCtrl = () => {
           opening_hours: day.opening_hours,
           holiday_periods: day.holiday_periods,
           closure_periods: day.closure_periods
+          paid_tickets_count: day.paid_tickets_count,
         }
         daysMap.set(day.date, dayInfo)
 

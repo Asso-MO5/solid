@@ -272,7 +272,8 @@ export function CalCtrl(): CalendarCtrlReturn {
         isOpen: dayInfo?.is_open,
         openingHours: dayInfo?.opening_hours,
         holidayPeriods: dayInfo?.holiday_periods,
-        closurePeriods: dayInfo?.closure_periods
+        closurePeriods: dayInfo?.closure_periods,
+        paidTicketsCount: dayInfo?.paid_tickets_count
       }
     })
   })

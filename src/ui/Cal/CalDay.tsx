@@ -121,12 +121,19 @@ export const CalDay = (props: CalDayProps) => {
               <div class="text-sm font-medium">
                 {props.formatDate(props.day.date)}
               </div>
-              <Show when={props.day.isOpen !== undefined}>
-                <div
-                  class={`w-2 h-2 rounded-full ${props.day.isOpen ? 'bg-green-500' : 'bg-red-500'}`}
-                  title={props.day.isOpen ? 'Ouvert' : 'Fermé'}
-                />
-              </Show>
+              <div class="flex items-center gap-2">
+                <Show when={props.day.paidTicketsCount !== undefined}>
+                  <div class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded px-2 py-0.5">
+                    {props.day.paidTicketsCount}
+                  </div>
+                </Show>
+                <Show when={props.day.isOpen !== undefined}>
+                  <div
+                    class={`w-2 h-2 rounded-full ${props.day.isOpen ? 'bg-green-500' : 'bg-red-500'}`}
+                    title={props.day.isOpen ? 'Ouvert' : 'Fermé'}
+                  />
+                </Show>
+              </div>
             </div>
 
             <div class="space-y-1">
@@ -185,6 +192,12 @@ export const CalDay = (props: CalDayProps) => {
               class={`w-2 h-2 rounded-full mb-1 ${props.day.isOpen ? 'bg-green-500' : 'bg-red-500'}`}
               title={props.day.isOpen ? 'Ouvert' : 'Fermé'}
             />
+          </Show>
+          {/* Billets payés */}
+          <Show when={props.day.paidTicketsCount !== undefined}>
+            <div class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded px-2 py-0.5 mb-1">
+              {props.day.paidTicketsCount}
+            </div>
           </Show>
 
           {/* Ronds pour les événements */}
