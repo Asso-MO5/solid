@@ -126,7 +126,7 @@ export const TicketsTable = (props: TicketsTableProps) => {
                   <td class="px-4 py-3 font-mono text-xs">
                     <button
                       type="button"
-                      class="text-primary underline hover:no-underline"
+                      class="text-white underline hover:no-underline"
                       onClick={() => void downloadTicketPdf(ticket)}
                     >
                       {ticket.qr_code}
