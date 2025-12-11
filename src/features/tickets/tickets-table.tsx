@@ -1,6 +1,7 @@
 import { For, Show } from "solid-js"
 import type { TicketsCtrlReturn } from "./tickets.types"
 import type { Ticket } from "../entries/entries.types"
+import { clientEnv } from "~/env/client"
 
 interface TicketsTableProps {
   ctrl: TicketsCtrlReturn
@@ -96,7 +97,9 @@ export const TicketsTable = (props: TicketsTableProps) => {
                     {ticket.email || '--'}
                   </td>
                   <td class="px-4 py-3 font-mono text-xs">
-                    {ticket.qr_code}
+                    <a href={`${clientEnv.VITE_OCELOT_URL}/museum/tickets/qr/${ticket.qr_code}`} target="_blank">
+                      {ticket.qr_code}
+                    </a>
                   </td>
                   <td class="px-4 py-3 text-sm">
                     {getTicketTypeName(ticket)}
