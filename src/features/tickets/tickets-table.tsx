@@ -54,6 +54,33 @@ export const TicketsTable = (props: TicketsTableProps) => {
     return ticket.ticket_type || '--'
   }
 
+  const downloadTicketPdf = async (ticket: Ticket) => {
+    try {
+      const response = await fetch(
+        `${clientEnv.VITE_OCELOT_URL}/admin/tickets/${ticket.id}/pdf`,
+        { credentials: 'include' }
+      )
+
+      if (!response.ok) {
+        throw new Error('Erreur lors du téléchargement du billet')
+      }
+
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `ticket-${ticket.qr_code || ticket.id}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div class="overflow-x-auto">
       <table class="w-full border-collapse">
@@ -97,9 +124,13 @@ export const TicketsTable = (props: TicketsTableProps) => {
                     {ticket.email || '--'}
                   </td>
                   <td class="px-4 py-3 font-mono text-xs">
-                    <a href={`${clientEnv.VITE_OCELOT_URL}/museum/tickets/qr/${ticket.qr_code}`} target="_blank">
+                    <button
+                      type="button"
+                      class="text-primary underline hover:no-underline"
+                      onClick={() => void downloadTicketPdf(ticket)}
+                    >
                       {ticket.qr_code}
-                    </a>
+                    </button>
                   </td>
                   <td class="px-4 py-3 text-sm">
                     {getTicketTypeName(ticket)}
