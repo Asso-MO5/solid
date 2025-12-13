@@ -1,6 +1,21 @@
 import { For, Show } from "solid-js"
 import type { EntriesCtrlReturn, SortField, Ticket } from "./entries.types"
 
+// Fonction utilitaire pour calculer le montant total d'un ticket
+const getTicketTotalAmount = (ticket: Ticket): number => {
+  const basePrice = ticket.ticket_price || 0
+  const guidedTourPrice = ticket.notes?.guided_tour ? (ticket.notes.guided_tour_price || 0) : 0
+  return basePrice + guidedTourPrice
+}
+
+// Fonction pour formater le prix
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR'
+  }).format(price)
+}
+
 interface EntriesTableProps {
   ctrl: EntriesCtrlReturn
 }
@@ -106,6 +121,7 @@ export const EntriesTable = (props: EntriesTableProps) => {
                 {SortIcon('used_at')}
               </div>
             </th>
+            <th class="px-4 py-3 text-left">Montant</th>
           </tr>
         </thead>
         <tbody>
@@ -113,7 +129,7 @@ export const EntriesTable = (props: EntriesTableProps) => {
             when={props.ctrl.filteredTickets().length > 0}
             fallback={
               <tr>
-                <td colSpan={8} class="px-4 py-8 text-center text-gray-500">
+                <td colSpan={9} class="px-4 py-8 text-center text-gray-500">
                   Aucun billet trouvé
                 </td>
               </tr>
@@ -151,6 +167,9 @@ export const EntriesTable = (props: EntriesTableProps) => {
                       ? new Date(ticket.used_at).toLocaleString('fr-FR')
                       : '--'
                     }
+                  </td>
+                  <td class="px-4 py-3 font-semibold">
+                    {formatPrice(getTicketTotalAmount(ticket))}
                   </td>
                 </tr>
               )}

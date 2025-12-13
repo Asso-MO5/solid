@@ -3,6 +3,21 @@ import { useEntriesScan } from "./entries-scan.ctrl"
 import { toast } from "~/ui/Toast"
 import type { Ticket } from "./entries.types"
 
+// Fonction utilitaire pour calculer le montant total d'un ticket
+const getTicketTotalAmount = (ticket: Ticket): number => {
+  const basePrice = ticket.ticket_price || 0
+  const guidedTourPrice = ticket.notes?.guided_tour ? (ticket.notes.guided_tour_price || 0) : 0
+  return basePrice + guidedTourPrice
+}
+
+// Fonction pour formater le prix
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR'
+  }).format(price)
+}
+
 interface EntriesScanQrProps {
   onTicketScanned?: (ticket: Ticket) => void
   scanResults: Ticket[]
@@ -121,7 +136,8 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
     scanCtrl.addScanResult(result)
 
     if (result.success && result.ticket) {
-      toast.success('Succès', result.message)
+      const totalAmount = getTicketTotalAmount(result.ticket)
+      toast.success('Succès', `${result.message} - Montant: ${formatPrice(totalAmount)}`)
       props.onTicketScanned?.(result.ticket)
     } else {
       toast.error('Erreur', result.message)
@@ -135,7 +151,8 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
     scanCtrl.addScanResult(result)
 
     if (result.success && result.ticket) {
-      toast.success('Succès', result.message)
+      const totalAmount = getTicketTotalAmount(result.ticket)
+      toast.success('Succès', `${result.message} - Montant: ${formatPrice(totalAmount)}`)
       props.onTicketScanned?.(result.ticket)
     } else {
       console.error(result)
@@ -217,37 +234,45 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
         </div>
         <div class="flex flex-col gap-2">
           <For each={props?.scanResults || []}>
-            {(result) => <div>
-              <div class="flex items-center justify-between p-2 border border-gray-300 rounded-lg">
-                <div class="flex-1">
-                  <div class="font-semibold">
-                    {new Date(result?.used_at || '').toLocaleTimeString('fr-FR')}
-                  </div>
-                  <div class="text-sm text-gray-600 mt-1">
-                    {result?.first_name} {result?.last_name || ''}
-                  </div>
+            {(ticket) => {
+              const totalAmount = getTicketTotalAmount(ticket)
+              return (
+                <div>
+                  <div class="flex items-center justify-between p-2 border border-gray-300 rounded-lg">
+                    <div class="flex-1">
+                      <div class="font-semibold">
+                        {new Date(ticket?.used_at || '').toLocaleTimeString('fr-FR')}
+                      </div>
+                      <div class="text-sm text-gray-600 mt-1">
+                        {ticket?.first_name} {ticket?.last_name || ''}
+                      </div>
 
-                  <div class="text-sm text-gray-600 mt-1">
-                    {result?.qr_code || ''}
+                      <div class="text-sm text-gray-600 mt-1">
+                        {ticket?.qr_code || ''}
+                      </div>
+                      <div class="text-sm font-semibold text-green-600 mt-1">
+                        Montant: {formatPrice(totalAmount)}
+                      </div>
+                      <Show when={ticket?.notes?.guided_tour}>
+                        <div class="text-sm text-blue-600 mt-1">
+                          Visite guidée
+                        </div>
+                      </Show>
+                      <Show when={ticket?.transaction_status === 'not_paid'}>
+                        <div class="text-sm text-accent mt-1">
+                          Non payé
+                        </div>
+                      </Show>
+                      <Show when={ticket?.notes?.pricing_info?.requires_proof}>
+                        <div class="text-sm text-accent mt-1">
+                          {ticket?.notes?.pricing_info?.translations?.fr?.description}
+                        </div>
+                      </Show>
+                    </div>
                   </div>
-                  <Show when={result?.notes?.guided_tour}>
-                    <div class="text-sm text-blue-600 mt-1">
-                      Visite guidée
-                    </div>
-                  </Show>
-                  <Show when={result?.transaction_status === 'not_paid'}>
-                    <div class="text-sm text-accent mt-1">
-                      Non payé
-                    </div>
-                  </Show>
-                  <Show when={result?.notes?.pricing_info?.requires_proof}>
-                    <div class="text-sm text-accent mt-1">
-                      {result?.notes?.pricing_info?.translations?.fr?.description}
-                    </div>
-                  </Show>
                 </div>
-              </div>
-            </div>}
+              )
+            }}
           </For>
         </div>
       </div >
