@@ -24,6 +24,7 @@ export const statsWsHandler = async (room: keyof typeof stats) => {
   }
 
   const data = await response.json();
+
   setStats(room, data[room]);
 
 }

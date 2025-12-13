@@ -6,7 +6,7 @@ import { StatCard } from "~/ui/stat-card";
 export const PeopleInMuseum: VoidComponent = () => {
 
   onMount(() => {
-    statsWsHandler('current_visitors');
+    statsWsHandler('tickets_stats');
   });
 
   return (<StatCard title="Personne dans le musée" value={stats.current_visitors} unit="personne" unitPlural="personnes" />)
