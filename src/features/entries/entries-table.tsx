@@ -122,6 +122,7 @@ export const EntriesTable = (props: EntriesTableProps) => {
               </div>
             </th>
             <th class="px-4 py-3 text-left">Montant</th>
+            <th class="px-4 py-3 text-left">Paiement</th>
           </tr>
         </thead>
         <tbody>
@@ -129,7 +130,7 @@ export const EntriesTable = (props: EntriesTableProps) => {
             when={props.ctrl.filteredTickets().length > 0}
             fallback={
               <tr>
-                <td colSpan={9} class="px-4 py-8 text-center text-gray-500">
+                <td colSpan={10} class="px-4 py-8 text-center text-gray-500">
                   Aucun billet trouvé
                 </td>
               </tr>
@@ -149,7 +150,7 @@ export const EntriesTable = (props: EntriesTableProps) => {
                   </td>
                   <td class="px-4 py-3">
                     <span class={`px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(ticket.status)}`}>
-                      {getStatusLabel(ticket.status)} {ticket.transaction_status === 'not_paid' ? ' (Non payé)' : ''}
+                      {getStatusLabel(ticket.status)}
                     </span>
                   </td>
                   <td class="px-4 py-3">
@@ -170,6 +171,11 @@ export const EntriesTable = (props: EntriesTableProps) => {
                   </td>
                   <td class="px-4 py-3 font-semibold">
                     {formatPrice(getTicketTotalAmount(ticket))}
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class={`px-2 py-1 rounded-full text-xs font-medium ${ticket.transaction_status === 'not_paid' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                      {ticket.transaction_status === 'not_paid' ? 'Non payé' : 'Payé'}
+                    </span>
                   </td>
                 </tr>
               )}

@@ -137,7 +137,8 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
 
     if (result.success && result.ticket) {
       const totalAmount = getTicketTotalAmount(result.ticket)
-      toast.success('Succès', `${result.message} - Montant: ${formatPrice(totalAmount)}`)
+      const transactionStatus = result.ticket.transaction_status === 'not_paid' ? ' (Non payé)' : ' (Payé)'
+      toast.success('Succès', `${result.message} - Montant: ${formatPrice(totalAmount)}${transactionStatus}`)
       props.onTicketScanned?.(result.ticket)
     } else {
       toast.error('Erreur', result.message)
@@ -152,7 +153,8 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
 
     if (result.success && result.ticket) {
       const totalAmount = getTicketTotalAmount(result.ticket)
-      toast.success('Succès', `${result.message} - Montant: ${formatPrice(totalAmount)}`)
+      const transactionStatus = result.ticket.transaction_status === 'not_paid' ? ' (Non payé)' : ' (Payé)'
+      toast.success('Succès', `${result.message} - Montant: ${formatPrice(totalAmount)}${transactionStatus}`)
       props.onTicketScanned?.(result.ticket)
     } else {
       console.error(result)
@@ -253,14 +255,12 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
                       <div class="text-sm font-semibold text-green-600 mt-1">
                         Montant: {formatPrice(totalAmount)}
                       </div>
+                      <div class={`text-sm font-medium mt-1 ${ticket?.transaction_status === 'not_paid' ? 'text-red-600' : 'text-green-600'}`}>
+                        {ticket?.transaction_status === 'not_paid' ? 'Non payé' : 'Payé'}
+                      </div>
                       <Show when={ticket?.notes?.guided_tour}>
                         <div class="text-sm text-blue-600 mt-1">
                           Visite guidée
-                        </div>
-                      </Show>
-                      <Show when={ticket?.transaction_status === 'not_paid'}>
-                        <div class="text-sm text-accent mt-1">
-                          Non payé
                         </div>
                       </Show>
                       <Show when={ticket?.notes?.pricing_info?.requires_proof}>
