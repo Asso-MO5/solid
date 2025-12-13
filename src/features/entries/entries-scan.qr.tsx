@@ -235,6 +235,11 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
                       Visite guidée
                     </div>
                   </Show>
+                  <Show when={result?.transaction_status === 'not_paid'}>
+                    <div class="text-sm text-accent mt-1">
+                      Non payé
+                    </div>
+                  </Show>
                   <Show when={result?.notes?.pricing_info?.requires_proof}>
                     <div class="text-sm text-accent mt-1">
                       {result?.notes?.pricing_info?.translations?.fr?.description}

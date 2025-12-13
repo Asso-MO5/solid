@@ -133,7 +133,7 @@ export const EntriesTable = (props: EntriesTableProps) => {
                   </td>
                   <td class="px-4 py-3">
                     <span class={`px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(ticket.status)}`}>
-                      {getStatusLabel(ticket.status)}
+                      {getStatusLabel(ticket.status)} {ticket.transaction_status === 'not_paid' ? ' (Non payé)' : ''}
                     </span>
                   </td>
                   <td class="px-4 py-3">

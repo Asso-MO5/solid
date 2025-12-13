@@ -9,6 +9,7 @@ export interface Ticket {
   reservation_date: string
   first_name?: string
   last_name?: string
+  transaction_status?: 'paid' | 'not_paid'
   email?: string
   ticket_price: number
   ticket_type?: string
