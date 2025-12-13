@@ -173,47 +173,57 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
   return (
     <div class="flex flex-col gap-4 p-3">
       {/* Zone de scan vidéo */}
-      <Show when={!scanCtrl.isScanning()}>
-        <div class=" aspect-video rounded-lg border border-gray-300 flex items-center justify-center" >
-          <div>
-            CAMERA OFF
-          </div>
-        </div>
-      </Show>
-
-      <Show when={scanCtrl.isScanning()}>
-        <div class="relative">
-          <video
-            ref={setVideoRef}
-            autoplay
-            playsinline
-            class="aspect-video ratio-16/9 rounded-lg border border-gray-300"
-            style={{ transform: 'scaleX(-1)' }} // Miroir pour meilleure UX
-          />
-          <Show when={scanCtrl.cameraError()}>
-            <div class="absolute inset-0 flex items-center justify-center bg-red-50 border border-red-200 rounded-lg">
-              <p class="text-red-600">{scanCtrl.cameraError()}</p>
+      <div class="relative">
+        <Show when={!scanCtrl.isScanning()}>
+          <div
+            class="aspect-video rounded-lg border border-gray-300 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={() => void (async () => {
+              await initQRCodeReader()
+              scanCtrl.startScan()
+              await startCamera()
+            })()}
+          >
+            <div class="text-gray-500">
+              CAMERA OFF
             </div>
-          </Show>
-        </div>
-      </Show>
+          </div>
+        </Show>
 
-      <Show when={!scanCtrl.isScanning()}>
-        <div class="flex flex-col gap-2">
-          <button onClick={() => void (async () => {
-            await initQRCodeReader()
-            scanCtrl.startScan()
-            await startCamera()
-          })()} class="primary">
-            Scanner
-          </button>
-        </div>
-      </Show>
-      <Show when={scanCtrl.isScanning()}>
-        <button onClick={stopCamera} class="secondary">
-          Arrêter le scan
-        </button>
-      </Show>
+        <Show when={scanCtrl.isScanning()}>
+          <div
+            class="relative cursor-pointer"
+            onClick={stopCamera}
+          >
+            <video
+              ref={setVideoRef}
+              autoplay
+              playsinline
+              class="aspect-video ratio-16/9 rounded-lg border border-gray-300"
+            //  style={{ transform: 'scaleX(-1)' }}
+            />
+            <Show when={scanCtrl.cameraError()}>
+              <div class="absolute inset-0 flex items-center justify-center bg-red-50 border border-red-200 rounded-lg">
+                <p class="text-red-600">{scanCtrl.cameraError()}</p>
+              </div>
+            </Show>
+            {/* Chip "Arrêter" en haut à droite */}
+            <div class="absolute top-2 right-2 pointer-events-none">
+              <span class="px-3 py-1 bg-red-500 text-white text-xs rounded-full shadow-md">
+                Arrêter
+              </span>
+            </div>
+          </div>
+        </Show>
+
+        {/* Chip "Scanner" en haut à droite quand la caméra est éteinte */}
+        <Show when={!scanCtrl.isScanning()}>
+          <div class="absolute top-2 right-2">
+            <span class="px-3 py-1 bg-primary text-white text-xs rounded-full shadow-md">
+              Scanner
+            </span>
+          </div>
+        </Show>
+      </div>
 
       {/* Champ de saisie manuelle */}
       <div class="flex flex-col gap-2">
