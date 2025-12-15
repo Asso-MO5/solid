@@ -6,7 +6,9 @@ import { authRoles } from "./auth.roles"
  * Propriétés pour vérifier les permissions d'un utilisateur
  */
 type UseCanProps = {
-  /** Vérifie si l'utilisateur a le rôle admin (dev, com, bureau) */
+  /** Vérifie si l'utilisateur a le rôle bureau (bureau, dev) */
+  bureau?: boolean
+  /** Vérifie si l'utilisateur a le rôle admin (dev, com, bureau, museum) */
   admin?: boolean
   /** Vérifie si l'utilisateur a le rôle video (video, live) */
   video?: boolean
