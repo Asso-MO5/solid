@@ -47,9 +47,14 @@ export const useCan = (props: UseCanProps) => {
       return false
     }
 
+    if (props.bureau && auth.roles.some(role => authRoles.bureau.test(role))) {
+      return true
+    }
+
     if (props.admin && auth.roles.some(role => authRoles.admin.test(role))) {
       return true
     }
+
     if (props.video && auth.roles.some(role => authRoles.video.test(role))) {
       return true
     }
