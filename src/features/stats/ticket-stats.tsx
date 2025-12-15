@@ -8,9 +8,12 @@ export const TicketStats: VoidComponent = () => {
   const can = useCan({ admin: true })
   onMount(() => {
     statsWsHandler('tickets_stats');
+    statsWsHandler('bank_stats');
+
   });
 
   const ticketsStats = () => stats.tickets_stats
+  const bankStats = () => stats.bank_stats
 
   return (
     <Show when={can()}>
@@ -21,13 +24,6 @@ export const TicketStats: VoidComponent = () => {
           unit="billet"
           unitPlural="billets"
         />
-
-        <StatCard
-          title="Montant total"
-          value={ticketsStats().total_amount}
-          unit="€"
-          unitPlural="€"
-        />
         <StatCard
           title="Billets vendus cette semaine"
           value={ticketsStats().week_tickets_sold}
@@ -35,14 +31,26 @@ export const TicketStats: VoidComponent = () => {
           unitPlural="billets"
         />
         <StatCard
-          title="Montant de la semaine"
-          value={ticketsStats().week_amount}
+          title="Total"
+          value={bankStats().total_all_time}
           unit="€"
           unitPlural="€"
         />
         <StatCard
-          title="Montant du mois"
-          value={ticketsStats().month_amount}
+          title="Jour"
+          value={bankStats().total_day}
+          unit="€"
+          unitPlural="€"
+        />
+        <StatCard
+          title="Semaine"
+          value={bankStats().total_week}
+          unit="€"
+          unitPlural="€"
+        />
+        <StatCard
+          title="Mois"
+          value={bankStats().total_month}
           unit="€"
           unitPlural="€"
         />

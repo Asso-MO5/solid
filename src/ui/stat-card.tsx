@@ -9,9 +9,9 @@ type StatCardProps = {
 export const StatCard = (props: StatCardProps) => {
   const formatValue = (value: number, unit?: string) => {
     if (unit === '€') {
-      return value.toFixed(2).replace('.', ',')
+      return value?.toFixed?.(2)?.replace('.', ',') ?? '0,00'
     }
-    return value.toLocaleString('fr-FR')
+    return value?.toLocaleString('fr-FR') ?? '0'
   }
 
   const unitValue = () => props.value

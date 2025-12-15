@@ -7,12 +7,17 @@ export type TicketsStats = {
     tickets_count: number;
     amount: number;
   }[];
-  total_amount: number;
-  week_amount: number;
-  month_amount: number;
+}
+
+export type BankStats = {
+  total_all_time: number;
+  total_day: number;
+  total_month: number;
+  total_week: number;
 }
 
 export type Stats = {
   current_visitors: number;
+  bank_stats: BankStats;
   tickets_stats: TicketsStats;
 }
