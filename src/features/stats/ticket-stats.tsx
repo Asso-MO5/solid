@@ -5,7 +5,7 @@ import { StatCard } from "~/ui/stat-card";
 import { useCan } from "../auth/can.ctrl";
 
 export const TicketStats: VoidComponent = () => {
-  const can = useCan({ admin: true })
+  const can = useCan({ bureau: true })
   onMount(() => {
     statsWsHandler('tickets_stats');
     statsWsHandler('bank_stats');
