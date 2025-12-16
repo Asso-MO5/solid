@@ -6,7 +6,8 @@ import { useCan } from "../auth/can.ctrl";
 import type { VisitorSlotStat } from "./stats.type";
 
 export const TicketStats: VoidComponent = () => {
-  const can = useCan({ bureau: true })
+  const canSeeBank = useCan({ bureau: true })
+  const canSeeVisitors = useCan({ bureau: true })
   onMount(() => {
     statsWsHandler('tickets_stats');
     statsWsHandler('bank_stats');
@@ -65,7 +66,7 @@ export const TicketStats: VoidComponent = () => {
 
   return (
     <>
-      <Show when={can()}>
+      <Show when={canSeeBank()}>
         <>
           <StatCard
             title="Total billets vendus"
@@ -108,7 +109,7 @@ export const TicketStats: VoidComponent = () => {
         </>
       </Show>
       <div class="col-span-full">
-        <Show when={visitorsByDay().length}>
+        <Show when={visitorsByDay().length && canSeeVisitors()}>
           <div class="lg:grid-cols-4 md:grid-cols-2 mt-4 grid grid-cols-1 gap-4 w-full">
             <For each={visitorsByDay()}>
               {(day) => (
