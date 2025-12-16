@@ -16,8 +16,26 @@ export type BankStats = {
   total_week: number;
 }
 
+export type VisitorSlotStat = {
+  date: string;
+  day_name: string;
+  start_time: string;
+  end_time: string;
+  capacity: number;
+  expected_people: number;
+  occupancy_percentage: number;
+  is_half_price: boolean;
+}
+
+export type VisitorsStats = {
+  week_start: string;
+  week_end: string;
+  slots_stats: VisitorSlotStat[];
+}
+
 export type Stats = {
   current_visitors: number;
   bank_stats: BankStats;
   tickets_stats: TicketsStats;
+  visitors_stats: VisitorsStats | null;
 }

@@ -13,7 +13,8 @@ export const [stats, setStats] = createStore<Stats>({
     total_tickets_sold: 0,
     week_tickets_sold: 0,
     week_tickets_by_day: [],
-  }
+  },
+  visitors_stats: null,
 });
 
 
