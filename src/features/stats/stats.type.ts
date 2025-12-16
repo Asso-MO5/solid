@@ -27,9 +27,16 @@ export type VisitorSlotStat = {
   is_half_price: boolean;
 }
 
+export type DailyTotal = {
+  date: string;
+  day_name: string;
+  total_unique_tickets: number;
+}
+
 export type VisitorsStats = {
   week_start: string;
   week_end: string;
+  daily_totals: DailyTotal[];
   slots_stats: VisitorSlotStat[];
 }
 
