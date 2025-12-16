@@ -30,20 +30,30 @@ export const TicketStats: VoidComponent = () => {
       totalCapacity: number;
     }>();
 
+    // Créer un Map pour les daily_totals pour accès rapide
+    const dailyTotalsMap = new Map<string, number>();
+    if (visitors.daily_totals) {
+      for (const daily of visitors.daily_totals) {
+        dailyTotalsMap.set(daily.date, daily.total_unique_tickets);
+      }
+    }
+
     for (const slot of visitors.slots_stats) {
       const existing = byDate.get(slot.date);
       if (!existing) {
+        // Utiliser total_unique_tickets depuis daily_totals si disponible, sinon 0
+        const totalUniqueTickets = dailyTotalsMap.get(slot.date) ?? 0;
         byDate.set(slot.date, {
           date: slot.date,
           day_name: slot.day_name,
           slots: [slot],
-          totalExpected: slot.expected_people,
+          totalExpected: totalUniqueTickets,
           totalCapacity: slot.capacity,
         });
       } else {
         existing.slots.push(slot);
-        existing.totalExpected += slot.expected_people;
         existing.totalCapacity += slot.capacity;
+        // totalExpected reste celui de daily_totals, pas besoin de l'incrémenter
       }
     }
 
