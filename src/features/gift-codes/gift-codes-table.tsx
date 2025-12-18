@@ -117,9 +117,12 @@ export const GiftCodesTable = (props: GiftCodesTableProps) => {
               return (
                 <tr class="border-b border-gray-100 hover:bg-gray-50">
                   <td
-                    title={pack.codes[0].notes}
+                    title={pack.title || ''}
                     class="px-4 py-3 text-sm font-mono truncate max-w-[200px]">
-                    {pack.codes[0].notes}
+                    <Show when={pack.isPaid}>
+                      <span class="text-green-600 text-xs mr-2">Paid</span>
+                    </Show>
+                    {pack.title || '--'}
                   </td>
                   <td class="px-4 py-3 text-sm">
                     {pack.codes_count}
@@ -129,9 +132,6 @@ export const GiftCodesTable = (props: GiftCodesTableProps) => {
                   </td>
                   <td class="px-4 py-3 text-sm">
                     <span class="text-blue-600 font-medium">{pack.unused_count}</span>
-                  </td>
-                  <td class="px-4 py-3 text-sm">
-                    <span class="text-red-600 font-medium">{pack.expired_count}</span>
                   </td>
                   <td class="px-4 py-3">
                     <div class="flex items-center gap-2">
@@ -159,7 +159,7 @@ export const GiftCodesTable = (props: GiftCodesTableProps) => {
                       </button>
                       <button
                         onClick={() => props.ctrl.copyUnusedCodes(pack)}
-                        disabled={pack.unused_count === 0 || props.ctrl.isLoading()}
+                        disabled={pack.unused_count === 0 || props.ctrl.isLoading() || !pack.isPaid}
                         class="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300"
                         title="Copier les codes non utilisés"
                       >
@@ -173,7 +173,7 @@ export const GiftCodesTable = (props: GiftCodesTableProps) => {
           </For>
         </Show>
       </tbody>
-    </table>
+    </table >
 
   )
 }
