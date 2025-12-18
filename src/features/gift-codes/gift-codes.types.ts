@@ -19,6 +19,8 @@ export interface GiftCode {
 }
 
 export interface GiftCodePack {
+  title?: string
+  isPaid?: boolean
   pack_id: string
   codes: GiftCode[]
   codes_count: number

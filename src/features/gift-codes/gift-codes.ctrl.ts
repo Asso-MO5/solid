@@ -70,7 +70,24 @@ export const useGiftCodes = (): GiftCodesCtrlReturn => {
           total?: number
         }
 
-        setPacks(Array.isArray(responseData.packs) ? responseData.packs : [])
+
+        const packs = Array.isArray(responseData.packs) ? responseData.packs : []
+        setPacks(packs.map(pack => {
+          let notes = null
+          try {
+            notes = pack.codes[0].notes ? (typeof pack.codes[0].notes === 'string' ? JSON.parse(pack.codes[0].notes) : pack.codes[0].notes) : null
+          } catch (error) {
+            notes = pack.codes[0].notes
+          }
+
+          const isPaid = !!notes?.checkout_id
+
+          return {
+            ...pack,
+            isPaid,
+            title: isPaid ? notes?.buyer_email : notes,
+          }
+        }))
 
         // Récupérer totalPages (camelCase ou snake_case)
         const totalPagesValue = responseData.totalPages ?? responseData.total_pages
