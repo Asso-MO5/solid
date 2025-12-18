@@ -159,7 +159,7 @@ export const GiftCodesTable = (props: GiftCodesTableProps) => {
                       </button>
                       <button
                         onClick={() => props.ctrl.copyUnusedCodes(pack)}
-                        disabled={pack.unused_count === 0 || props.ctrl.isLoading() || !pack.isPaid}
+                        disabled={pack.unused_count === 0 || props.ctrl.isLoading() || pack.isPaid}
                         class="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300"
                         title="Copier les codes non utilisés"
                       >
