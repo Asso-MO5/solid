@@ -11,6 +11,7 @@ export interface CalendarDay {
   items: CalendarEvent[]
   isOpen?: boolean
   paid_tickets_count?: number
+  members_presence_count?: number
   openingHours?: Array<{
     start_time: string
     end_time: string

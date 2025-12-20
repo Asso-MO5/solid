@@ -5,14 +5,23 @@ import { CalViewSelector } from "~/ui/Cal/CalView.selector"
 import { CalControls } from "~/ui/Cal/CalControls"
 import { CalCtrl } from "~/ui/Cal/Cal.ctrl"
 import { EventsCtrl } from "~/features/events/events.ctrl"
-import { Show, createEffect, createSignal, onMount } from "solid-js"
+import { useStaffPresence } from "~/features/staff-presence/staff-presence.ctrl"
+import { ModalCtrl } from "~/ui/Modal/Modal.ctrl"
+import { DayDetailsModal } from "./day-details.modal"
+import type { CreatePresenceData, UpdatePresenceData } from "~/features/staff-presence/staff-presence.types"
+import { Show, createEffect, createMemo, createSignal, onMount } from "solid-js"
 import { useSearchParams } from "@solidjs/router"
 import { auth } from "~/features/auth/auth.store"
+import { useCan } from "~/features/auth/can.ctrl"
+import type { CalendarEvent } from "~/ui/Cal/Cal.types"
 
 const AdminEventsList = () => {
   const eventsCtrl = EventsCtrl()
   const { events, calendarDays: daysInfo, loading, getEvents } = eventsCtrl
+  const presenceCtrl = useStaffPresence()
   const calendar = CalCtrl()
+  const modal = ModalCtrl()
+  const canMember = useCan({ member: true })
   const [previousDate, setPreviousDate] = createSignal<Date | null>(null)
   const [searchParams] = useSearchParams()
   const [highlightedEventId, setHighlightedEventId] = createSignal<string | null>(null)
@@ -32,9 +41,15 @@ const AdminEventsList = () => {
     }
   })
 
-  // Charger les événements au montage initial
+  const canAdmin = useCan({ bureau: true })
+
+  // Charger les événements et présences au montage initial
   onMount(() => {
     getEvents(calendar.view(), calendar.selectedDate())
+    // Les membres voient leurs présences, les admins voient toutes les présences
+    if (canMember() || canAdmin()) {
+      presenceCtrl.getPresences(calendar.view(), calendar.selectedDate())
+    }
   })
 
   // Synchroniser les informations des jours avec le calendrier
@@ -75,8 +90,96 @@ const AdminEventsList = () => {
     if (shouldRefresh) {
       setPreviousDate(currentDate)
       getEvents(currentView, currentDate)
+      // Les membres voient leurs présences, les admins voient toutes les présences
+      if (canMember() || canAdmin()) {
+        presenceCtrl.getPresences(currentView, currentDate)
+      }
     }
   })
+
+  // Combiner les événements et les présences
+  const allItems = createMemo((): CalendarEvent[] => {
+    const eventsList = events() || []
+    const presencesList = (canMember() || canAdmin()) ? presenceCtrl.presencesAsEvents() : []
+    const combined = [...eventsList, ...presencesList]
+    // Debug: vérifier que les présences sont bien incluses
+    if (presencesList.length > 0) {
+      console.log('Presences dans allItems:', presencesList.length, presencesList)
+    }
+    return combined
+  })
+
+  // Handlers pour les actions de présence
+  const handlePresenceCreate = async (data: CreatePresenceData) => {
+    await presenceCtrl.createPresence(data)
+    await presenceCtrl.getPresences(calendar.view(), calendar.selectedDate())
+    // Ne pas fermer la modale, juste recharger les données
+  }
+
+  const handlePresenceUpdate = async (id: string, data: UpdatePresenceData) => {
+    await presenceCtrl.updatePresence(id, data)
+    await presenceCtrl.getPresences(calendar.view(), calendar.selectedDate())
+    // Ne pas fermer la modale, juste recharger les données
+  }
+
+  const handlePresenceDelete = async (id: string) => {
+    await presenceCtrl.deletePresence(id)
+    await presenceCtrl.getPresences(calendar.view(), calendar.selectedDate())
+    // Ne pas fermer la modale, juste recharger les données
+  }
+
+  // Handler pour ouvrir la modale unifiée
+  const openDayDetailsModal = (day: Date, event?: CalendarEvent) => {
+    // Récupérer les informations du jour depuis le calendrier
+    const calendarDays = calendar.calendarDays()
+    const dayInfo = calendarDays.find(d => {
+      const d1 = d.date.toISOString().split('T')[0]
+      const d2 = day.toISOString().split('T')[0]
+      return d1 === d2
+    })
+
+    modal.open({
+      title: dayInfo?.date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) || 'Détails du jour', // Le titre est géré dans la modale
+      content: (
+        <DayDetailsModal
+          day={day}
+          dayInfo={dayInfo}
+          event={event}
+          presenceCtrl={presenceCtrl}
+          onCreatePresence={handlePresenceCreate}
+          onUpdatePresence={handlePresenceUpdate}
+          onDeletePresence={handlePresenceDelete}
+          onToggleRefuse={async (id, refused) => {
+            await presenceCtrl.toggleRefuse(id, refused)
+            await presenceCtrl.getPresences(calendar.view(), calendar.selectedDate())
+          }}
+          onClose={() => modal.close()}
+        />
+      ),
+      size: 'lg',
+      closable: true,
+    })
+  }
+
+  // Handler pour créer/modifier une présence depuis le calendrier
+  const handlePresenceClick = (day: Date) => {
+    openDayDetailsModal(day)
+  }
+
+  // Handler pour cliquer sur un item (événement ou présence)
+  const handleItemClick = (event: CalendarEvent) => {
+    // Déterminer la date de l'événement/présence
+    let eventDate = event.startDate
+    if (event.id.startsWith('presence-')) {
+      const presenceId = event.id.replace('presence-', '')
+      const presence = presenceCtrl.presences().find(p => p.id === presenceId)
+      if (presence) {
+        eventDate = new Date(presence.date)
+      }
+    }
+
+    openDayDetailsModal(eventDate, event)
+  }
 
 
   return (
@@ -105,11 +208,14 @@ const AdminEventsList = () => {
           <Show when={!loading()}>
             <Cal
               canCreateEvent={auth.roles?.includes('admin')}
-              items={events()}
+              items={allItems()}
               highlightedEventId={highlightedEventId()}
+              showMembersCount={canAdmin()}
               onEventCreated={() => {
                 getEvents(calendar.view(), calendar.selectedDate())
               }}
+              onDayClick={handlePresenceClick}
+              onItemClick={handleItemClick}
             />
           </Show>
         </div>

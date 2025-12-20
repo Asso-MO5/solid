@@ -221,4 +221,18 @@
   [data-active='false'] {
     @apply bg-gray-100 text-gray-800;
   }
+
+  /* Styles pour les événements mis en évidence dans le calendrier */
+  [data-highlighted='true'] {
+    @apply ring-2 ring-yellow-400 animate-pulse;
+  }
+
+  /* Styles pour l'indicateur d'ouverture du musée */
+  [data-open='true'] {
+    @apply bg-green-500;
+  }
+
+  [data-open='false'] {
+    @apply bg-red-500;
+  }
 }

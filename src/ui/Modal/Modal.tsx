@@ -43,7 +43,6 @@ export const Modal = () => {
                 <button
                   onClick={modal.close}
                   title="Fermer"
-
                 >
                   <Close size={20} />
                 </button>

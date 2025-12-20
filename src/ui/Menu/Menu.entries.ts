@@ -36,6 +36,10 @@ export const menuEntries: MenuEntry[] = [
         label: 'Codes cadeaux',
         href: '/museum/gift-codes',
       },
+      {
+        label: 'Présence des membres',
+        href: '/museum/staff-presence',
+      },
     ],
   },
   {

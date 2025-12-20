@@ -8,10 +8,11 @@ interface CalProps {
   items?: CalendarEvent[]
   canCreateEvent?: boolean
   renderItem?: (event: CalendarEvent, day: Date) => JSX.Element
-  onDayClick?: (day: Date) => void
+  onDayClick?: (day: Date, hour?: number) => void
   onItemClick?: (event: CalendarEvent) => void
   onEventCreated?: (event: CalendarEvent) => void
   highlightedEventId?: string | null
+  showMembersCount?: boolean
 }
 
 export function Cal(props: CalProps) {
@@ -19,6 +20,8 @@ export function Cal(props: CalProps) {
   const eventDetails = EventDetailsCtrl()
 
   const eventCreate = EventCreateCtrl(() => {
+    // Le callback sera appelé après la création d'un événement
+    // On peut appeler onEventCreated avec un événement vide car il sera rechargé
     props.onEventCreated?.({} as CalendarEvent)
   })
 
@@ -28,12 +31,18 @@ export function Cal(props: CalProps) {
     }
   })
   createEffect(() => {
-    if (props.items) {
-      calendar.setItems(props.items)
+    // S'assurer que les items sont mis à jour quand ils changent
+    const itemsArray = props.items
+    if (itemsArray) {
+      calendar.setItems(itemsArray)
     }
   })
 
   const handleDayClick = (day: Date, hour?: number) => {
+    // Toujours appeler onDayClick si défini (pour les présences par exemple)
+    props.onDayClick?.(day, hour)
+
+    // Pour les événements, vérifier les permissions
     if (!props.canCreateEvent) return
 
     let dateWithTime = day
@@ -43,7 +52,6 @@ export function Cal(props: CalProps) {
     }
 
     eventCreate.openCreateModal(dateWithTime)
-    props.onDayClick?.(day)
   }
 
   const handleEventCreated = (newEvent: CalendarEvent) => {
@@ -51,7 +59,7 @@ export function Cal(props: CalProps) {
   }
 
   const handleItemClick = (event: CalendarEvent) => {
-    eventDetails.openEvent(event)
+    // Laisser onItemClick gérer l'ouverture de la modale
     props.onItemClick?.(event)
   }
 
@@ -81,6 +89,7 @@ export function Cal(props: CalProps) {
               renderItem={props.renderItem}
               formatDate={calendar.formatDate}
               highlightedEventId={props.highlightedEventId}
+              showMembersCount={props.showMembersCount}
             />
           )}
         </For>

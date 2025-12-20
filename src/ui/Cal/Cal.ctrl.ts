@@ -205,12 +205,16 @@ export function CalCtrl(): CalendarCtrlReturn {
   }
 
   const getItemsForDay = (day: Date): CalendarEvent[] => {
+    const dayStart = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 0, 0, 0, 0)
+    const dayEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 23, 59, 59, 999)
+
     return items().filter((event: CalendarEvent) => {
       const startDate = new Date(event.startDate)
+      startDate.setHours(0, 0, 0, 0)
       const endDate = new Date(event.endDate)
-      const dayStart = new Date(day.getFullYear(), day.getMonth(), day.getDate())
-      const dayEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 23, 59, 59)
+      endDate.setHours(23, 59, 59, 999)
 
+      // Vérifier si l'événement/presence chevauche le jour
       return startDate <= dayEnd && endDate >= dayStart
     })
   }
@@ -245,11 +249,29 @@ export function CalCtrl(): CalendarCtrlReturn {
     return `${year}-${month}-${day}`
   }
 
+  // Calculer le nombre de membres présents par jour
+  const calculatePresencesByDate = createMemo(() => {
+    const presencesMap = new Map<string, number>()
+    const allItems = items()
+
+    // Compter les présences (non refusées) par date
+    allItems.forEach(item => {
+      if (item.id.startsWith('presence-') && item.status !== 'cancelled') {
+        const dateKey = formatDateKey(item.startDate)
+        const currentCount = presencesMap.get(dateKey) || 0
+        presencesMap.set(dateKey, currentCount + 1)
+      }
+    })
+
+    return presencesMap
+  })
+
   // Génération des jours du calendrier avec items et infos du musée
   const calendarDays = createMemo((): CalendarDay[] => {
     const current = selectedDate()
     const today = new Date()
     const infoMap = daysInfo()
+    const presencesMap = calculatePresencesByDate()
 
     let days: CalendarDay[] = []
 
@@ -265,6 +287,7 @@ export function CalCtrl(): CalendarCtrlReturn {
     return days.map(day => {
       const dateKey = formatDateKey(day.date)
       const dayInfo = infoMap.get(dateKey)
+      const membersCount = presencesMap.get(dateKey)
 
       return {
         ...day,
@@ -273,7 +296,8 @@ export function CalCtrl(): CalendarCtrlReturn {
         openingHours: dayInfo?.opening_hours,
         holidayPeriods: dayInfo?.holiday_periods,
         closurePeriods: dayInfo?.closure_periods,
-        paid_tickets_count: dayInfo?.paid_tickets_count
+        paid_tickets_count: dayInfo?.paid_tickets_count,
+        members_presence_count: membersCount
       }
     })
   })
