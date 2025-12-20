@@ -9,6 +9,7 @@ export interface CalDayProps {
   renderItem?: (event: CalendarEvent, day: Date) => JSX.Element
   formatDate: (date: Date) => string
   highlightedEventId?: string | null
+  showMembersCount?: boolean
 }
 
 export interface CalDayHourProps {

@@ -67,8 +67,8 @@ export const CalDay = (props: CalDayProps) => {
                     })}>
                       {(event) => (
                         <div
-                          class={`text-xs p-1 rounded cursor-pointer mb-1 ${props.highlightedEventId === event.id ? 'ring-2 ring-yellow-400 animate-pulse' : ''
-                            }`}
+                          class="text-xs p-1 rounded cursor-pointer mb-1"
+                          data-highlighted={props.highlightedEventId === event.id ? 'true' : 'false'}
                           style={{
                             'background-color': event.color ? `${event.color}20` : '#dbeafe',
                             'color': event.color || '#1e40af',
@@ -117,6 +117,7 @@ export const CalDay = (props: CalDayProps) => {
             data-open={props.day.isOpen}
             onClick={handleDayClick}
           >
+
             <div class="flex items-center justify-between mb-1">
               <div class="text-sm font-medium">
                 {props.formatDate(props.day.date)}
@@ -127,9 +128,15 @@ export const CalDay = (props: CalDayProps) => {
                     {props.day.paid_tickets_count}
                   </div>
                 </Show>
+                <Show when={props.showMembersCount && props.day.members_presence_count !== undefined && props.day.members_presence_count > 0}>
+                  <div class="text-[11px] font-semibold text-blue-800 bg-blue-50 border border-blue-200 rounded px-2 py-0.5">
+                    👥 {props.day.members_presence_count}
+                  </div>
+                </Show>
                 <Show when={props.day.isOpen !== undefined}>
                   <div
-                    class={`w-2 h-2 rounded-full ${props.day.isOpen ? 'bg-green-500' : 'bg-red-500'}`}
+                    class="w-2 h-2 rounded-full"
+                    data-open={props.day.isOpen ? 'true' : 'false'}
                     title={props.day.isOpen ? 'Ouvert' : 'Fermé'}
                   />
                 </Show>
@@ -140,8 +147,8 @@ export const CalDay = (props: CalDayProps) => {
               <For each={props.day.items}>
                 {(item) => (
                   <div
-                    class={`text-xs p-1 rounded cursor-pointer ${props.highlightedEventId === item.id ? 'ring-2 ring-yellow-400 animate-pulse' : ''
-                      }`}
+                    class="text-xs p-1 rounded cursor-pointer"
+                    data-highlighted={props.highlightedEventId === item.id ? 'true' : 'false'}
                     style={{
                       'background-color': item.color ? `${item.color}20` : '#dbeafe',
                       'color': item.color || '#1e40af',
@@ -189,7 +196,8 @@ export const CalDay = (props: CalDayProps) => {
           {/* Indicateur ouvert/fermé */}
           <Show when={props.day.isOpen !== undefined}>
             <div
-              class={`w-2 h-2 rounded-full mb-1 ${props.day.isOpen ? 'bg-green-500' : 'bg-red-500'}`}
+              class="w-2 h-2 rounded-full mb-1"
+              data-open={props.day.isOpen ? 'true' : 'false'}
               title={props.day.isOpen ? 'Ouvert' : 'Fermé'}
             />
           </Show>
@@ -197,6 +205,12 @@ export const CalDay = (props: CalDayProps) => {
           <Show when={props.day.paid_tickets_count !== undefined}>
             <div class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded px-2 py-0.5 mb-1">
               {props.day.paid_tickets_count}
+            </div>
+          </Show>
+          {/* Membres présents */}
+          <Show when={props.showMembersCount && props.day.members_presence_count !== undefined && props.day.members_presence_count > 0}>
+            <div class="text-[11px] font-semibold text-blue-800 bg-blue-50 border border-blue-200 rounded px-2 py-0.5 mb-1">
+              👥 {props.day.members_presence_count}
             </div>
           </Show>
 
