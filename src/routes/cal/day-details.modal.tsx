@@ -42,14 +42,21 @@ export const DayDetailsModal = (props: DayDetailsModalProps) => {
 
   const [activeTab, setActiveTab] = createSignal<Tab>(getInitialTab())
 
-  // Calculer dateStr de manière réactive
-  const dateStr = () => props.day.toISOString().split('T')[0]
+  // Calculer dateStr de manière réactive (sans décalage de fuseau horaire)
+  const dateStr = () => {
+    const d = props.day
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
   const existingPresence = () => props.presenceCtrl.presences().find(p => p.date === dateStr())
 
   // Récupérer toutes les présences pour ce jour (pour les admins)
   const dayPresences = () => {
     const allDays = props.presenceCtrl.days()
-    const dayData = allDays.find(d => d.date === dateStr())
+    const currentDateStr = dateStr()
+    const dayData = allDays.find(d => d.date === currentDateStr)
     return dayData?.presences || []
   }
 

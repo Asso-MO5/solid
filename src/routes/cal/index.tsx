@@ -129,7 +129,10 @@ const AdminEventsList = () => {
   }
 
   // Handler pour ouvrir la modale unifiée
-  const openDayDetailsModal = (day: Date, event?: CalendarEvent) => {
+  const openDayDetailsModal = async (day: Date, event?: CalendarEvent) => {
+    // Recharger les présences pour ce jour spécifique
+    await presenceCtrl.getPresences('day', day)
+    
     // Récupérer les informations du jour depuis le calendrier
     const calendarDays = calendar.calendarDays()
     const dayInfo = calendarDays.find(d => {
@@ -151,7 +154,7 @@ const AdminEventsList = () => {
           onDeletePresence={handlePresenceDelete}
           onToggleRefuse={async (id, refused) => {
             await presenceCtrl.toggleRefuse(id, refused)
-            await presenceCtrl.getPresences(calendar.view(), calendar.selectedDate())
+            await presenceCtrl.getPresences('day', day)
           }}
           onClose={() => modal.close()}
         />
