@@ -221,7 +221,7 @@ export const TicketStats: VoidComponent = () => {
 
         {/* Graphique des billets par jour de la semaine */}
         <Show when={weekTicketsChart().length > 0}>
-          <div class="col-span-2 border border-border rounded-md p-4 bg-white">
+          <div class="lg:col-span-2 md:col-span-1 col-span-full border border-border rounded-md p-4 bg-white">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">
               Billets vendus par jour (cette semaine)
             </h3>
@@ -252,7 +252,7 @@ export const TicketStats: VoidComponent = () => {
 
         {/* Graphique des billets par heure */}
         <Show when={hourlyChart().length > 0}>
-          <div class="col-span-2 border border-border rounded-md p-4 bg-white">
+          <div class="md:col-span-2 col-span-full border border-border rounded-md p-4 bg-white">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">
               Répartition par heure
             </h3>

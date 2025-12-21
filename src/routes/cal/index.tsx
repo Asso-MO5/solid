@@ -102,10 +102,6 @@ const AdminEventsList = () => {
     const eventsList = events() || []
     const presencesList = (canMember() || canAdmin()) ? presenceCtrl.presencesAsEvents() : []
     const combined = [...eventsList, ...presencesList]
-    // Debug: vérifier que les présences sont bien incluses
-    if (presencesList.length > 0) {
-      console.log('Presences dans allItems:', presencesList.length, presencesList)
-    }
     return combined
   })
 
