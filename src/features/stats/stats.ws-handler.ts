@@ -24,8 +24,6 @@ export const statsWsHandler = async (room: keyof typeof url) => {
 
   const data = await response.json();
 
-  console.log(data);
-
   if (room === 'bank_stats' || room === 'visitors_stats') {
     setStats(room, data);
   } else {
