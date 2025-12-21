@@ -4,7 +4,6 @@ import { statsWsHandler } from './stats.ws-handler'
 import { StatCard } from '~/ui/stat-card'
 import { useCan } from '../auth/can.ctrl'
 import type { VisitorSlotStat } from './stats.type'
-import { BarChart } from '~/ui/charts/BarChart'
 
 export const TicketStats: VoidComponent = () => {
   const canSeeBank = useCan({ bureau: true })
@@ -226,7 +225,28 @@ export const TicketStats: VoidComponent = () => {
             <h3 class="text-lg font-semibold text-gray-800 mb-4">
               Billets vendus par jour (cette semaine)
             </h3>
-            <BarChart items={weekTicketsChart()} orientation="vertical" />
+            <div class="flex flex-col gap-2">
+              <For each={weekTicketsChart()}>
+                {(item) => {
+                  const max = Math.max(...weekTicketsChart().map(i => i.value), 1)
+                  const percentage = (item.value / max) * 100
+                  return (
+                    <div class="flex flex-col gap-1">
+                      <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-700 font-medium">{item.label}</span>
+                        <span class="text-gray-800 font-semibold">{item.value}</span>
+                      </div>
+                      <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          class="h-full bg-primary transition-all"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  )
+                }}
+              </For>
+            </div>
           </div>
         </Show>
 
@@ -236,7 +256,31 @@ export const TicketStats: VoidComponent = () => {
             <h3 class="text-lg font-semibold text-gray-800 mb-4">
               Répartition par heure
             </h3>
-            <BarChart items={hourlyChart()} showPercentages={true} />
+            <div class="flex flex-col gap-2">
+              <For each={hourlyChart()}>
+                {(item) => {
+                  const max = Math.max(...hourlyChart().map(i => i.value), 1)
+                  const percentage = item.percentage ?? (item.value / max) * 100
+                  return (
+                    <div class="flex flex-col gap-1">
+                      <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-700 font-medium">{item.label}</span>
+                        <div class="flex items-center gap-2">
+                          <span class="text-gray-800 font-semibold">{item.value}</span>
+                          <span class="text-xs text-gray-500">({percentage.toFixed(1)}%)</span>
+                        </div>
+                      </div>
+                      <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          class="h-full bg-primary transition-all"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  )
+                }}
+              </For>
+            </div>
           </div>
         </Show>
 
@@ -275,10 +319,28 @@ export const TicketStats: VoidComponent = () => {
               <h4 class="text-sm font-medium text-gray-700 mb-2">
                 Répartition par nombre de billets
               </h4>
-              <BarChart
-                items={checkoutDistributionChart()}
-                orientation="vertical"
-              />
+              <div class="flex flex-col gap-2">
+                <For each={checkoutDistributionChart()}>
+                  {(item) => {
+                    const max = Math.max(...checkoutDistributionChart().map(i => i.value), 1)
+                    const percentage = (item.value / max) * 100
+                    return (
+                      <div class="flex flex-col gap-1">
+                        <div class="flex items-center justify-between text-sm">
+                          <span class="text-gray-700 font-medium">{item.label}</span>
+                          <span class="text-gray-800 font-semibold">{item.value}</span>
+                        </div>
+                        <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            class="h-full bg-primary transition-all"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    )
+                  }}
+                </For>
+              </div>
             </Show>
           </div>
         </Show>
