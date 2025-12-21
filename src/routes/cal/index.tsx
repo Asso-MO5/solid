@@ -132,7 +132,7 @@ const AdminEventsList = () => {
   const openDayDetailsModal = async (day: Date, event?: CalendarEvent) => {
     // Recharger les présences pour ce jour spécifique
     await presenceCtrl.getPresences('day', day)
-    
+
     // Récupérer les informations du jour depuis le calendrier
     const calendarDays = calendar.calendarDays()
     const dayInfo = calendarDays.find(d => {

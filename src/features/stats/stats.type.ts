@@ -5,8 +5,32 @@ export type TicketsStats = {
     date: string;
     day_name: string;
     tickets_count: number;
-    amount: number;
   }[];
+  total_donations: number;
+  average_ticket_price: number;
+  hourly_stats: {
+    start_time: string;
+    tickets_count: number;
+    percentage: number;
+  }[];
+  grouped_reservations: {
+    total_checkouts: number;
+    average_tickets_per_checkout: number;
+    max_tickets_in_checkout: number;
+    checkout_distribution: {
+      tickets_count: number;
+      checkouts_count: number;
+    }[];
+  };
+  total_revenue: number;
+  conversion_rate: number;
+  status_distribution: {
+    paid: number;
+    pending: number;
+    cancelled: number;
+    used: number;
+    expired: number;
+  };
 }
 
 export type BankStats = {
