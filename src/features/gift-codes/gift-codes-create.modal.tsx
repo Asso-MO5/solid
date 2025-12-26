@@ -14,14 +14,13 @@ export const GiftCodesCreateModal = (props: GiftCodesCreateModalProps) => {
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault()
-
-
+    const expires_at = expiresAt() ? expiresAt() + 'T23:59:59Z' : undefined;
 
     setIsSubmitting(true)
     try {
       await props.onCreate({
         quantity: quantity(),
-        expires_at: expiresAt() || undefined,
+        expires_at,
         notes: notes().trim() || undefined
       })
       if (props.onCancel) {
@@ -72,13 +71,13 @@ export const GiftCodesCreateModal = (props: GiftCodesCreateModalProps) => {
 
       <div class="flex flex-col gap-1">
         <label class="text-sm font-medium text-gray-700">
-          Date d'expiration
+          Date d'expiration (optionnel)
         </label>
         <input
           type="date"
           min={today}
           value={expiresAt()}
-          onInput={(e) => setExpiresAt(e.currentTarget.value)}
+          onInput={(e: InputEvent) => setExpiresAt((e.currentTarget as HTMLInputElement).value)}
           class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
