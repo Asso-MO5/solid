@@ -27,3 +27,18 @@ export interface TicketsCtrlReturn {
   resetFilters: () => void
 }
 
+export interface UpdateTicketData {
+  reservation_date?: string
+  slot_start_time?: string
+  slot_end_time?: string
+  email?: string
+  status?: 'active' | 'paid' | 'used' | 'cancelled' | 'refunded'
+}
+
+export interface TicketActionsCtrlReturn {
+  updateTicket: (ticketId: string, data: UpdateTicketData) => Promise<void>
+  resendTickets: (checkoutId: string) => Promise<void>
+  isUpdating: () => boolean
+  isResending: () => boolean
+}
+
