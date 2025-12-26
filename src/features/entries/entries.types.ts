@@ -5,13 +5,14 @@
 export interface Ticket {
   id: string
   qr_code: string
-  status: 'active' | 'used' | 'cancelled' | 'refunded'
+  status: 'paid' | 'used' | 'cancelled' | 'refunded'
   reservation_date: string
   first_name?: string
   last_name?: string
   transaction_status?: 'paid' | 'not_paid'
   email?: string
   ticket_price: number
+  checkout_id?: string
   ticket_type?: string
   slot_end_time: string // hh:mm:ss
   slot_start_time: string // hh:mm:ss
@@ -21,9 +22,10 @@ export interface Ticket {
 }
 
 export type ParseNote = {
-  guided_tour: boolean
-  guided_tour_price: number
-  pricing_info: {
+  guided_tour?: boolean
+  guided_tour_price?: number
+  checkout_id?: string
+  pricing_info?: {
     price_name: string
     translations: {
       fr: {

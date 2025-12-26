@@ -60,9 +60,6 @@ export const DayDetailsModal = (props: DayDetailsModalProps) => {
     return dayData?.presences || []
   }
 
-
-
-
   return (
     <div class="flex flex-col gap-4 max-w-3xl mx-auto">
       {/* Tabs */}
@@ -146,7 +143,7 @@ export const DayDetailsModal = (props: DayDetailsModalProps) => {
             </Show>
 
             {/* Billets payés */}
-            <Show when={props.dayInfo?.paid_tickets_count !== undefined}>
+            <Show when={props.dayInfo?.paid_tickets_count !== undefined && canAdmin()}>
               <div>
                 <span class="text-sm font-medium text-gray-600">Billets payés :</span>
                 <span class="ml-2 text-gray-900 font-semibold">
@@ -156,7 +153,7 @@ export const DayDetailsModal = (props: DayDetailsModalProps) => {
             </Show>
 
             {/* Membres présents (pour tous) */}
-            <Show when={props.dayInfo?.members_presence_count !== undefined && props.dayInfo.members_presence_count! > 0}>
+            <Show when={props.dayInfo?.members_presence_count !== undefined && props.dayInfo.members_presence_count! > 0 && canAdmin()}>
               <div>
                 <span class="text-sm font-medium text-gray-600">Membres présents :</span>
                 <span class="ml-2 text-gray-900 font-semibold">
