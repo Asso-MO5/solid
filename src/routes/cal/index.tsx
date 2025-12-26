@@ -16,8 +16,8 @@ import { useCan } from "~/features/auth/can.ctrl"
 import type { CalendarEvent } from "~/ui/Cal/Cal.types"
 
 const AdminEventsList = () => {
-  const eventsCtrl = EventsCtrl()
-  const { events, calendarDays: daysInfo, loading, getEvents } = eventsCtrl
+
+  const { events, calendarDays: daysInfo, loading, getEvents } = EventsCtrl()
   const presenceCtrl = useStaffPresence()
   const calendar = CalCtrl()
   const modal = ModalCtrl()

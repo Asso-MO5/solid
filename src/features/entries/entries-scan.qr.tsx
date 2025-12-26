@@ -28,9 +28,11 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
   const scanCtrl = useEntriesScan()
   const [videoRef, setVideoRef] = createSignal<HTMLVideoElement | null>(null)
   const [stream, setStream] = createSignal<MediaStream | null>(null)
+  const [lastScannedCode, setLastScannedCode] = createSignal<string | null>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let QrCode: any = null
+  let scanFrameId: number | null = null
 
   const initQRCodeReader = async () => {
     if (typeof window === 'undefined') return
@@ -68,6 +70,11 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
   }
 
   const stopCamera = () => {
+    // Arrêter la boucle de scan
+    if (scanFrameId !== null) {
+      cancelAnimationFrame(scanFrameId)
+      scanFrameId = null
+    }
 
     const currentStream = stream()
     if (currentStream) {
@@ -79,6 +86,8 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
       video.srcObject = null
     }
     scanCtrl.stopScan()
+    // Réinitialiser le dernier code scanné quand on arrête la caméra
+    setLastScannedCode(null)
   }
 
   const scanQRCode = () => {
@@ -91,8 +100,14 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
     const context = canvas.getContext('2d')
 
     const scanFrame = () => {
+      // Arrêter le scan seulement si la caméra est arrêtée
+      if (!scanCtrl.isScanning()) {
+        scanFrameId = null
+        return
+      }
+
       if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) {
-        requestAnimationFrame(scanFrame)
+        scanFrameId = requestAnimationFrame(scanFrame)
         return
       }
 
@@ -102,35 +117,43 @@ export const EntriesScanQr = (props: EntriesScanQrProps) => {
 
       const imageData = context?.getImageData(0, 0, canvas.width, canvas.height)
       if (!imageData) {
-        requestAnimationFrame(scanFrame)
+        scanFrameId = requestAnimationFrame(scanFrame)
         return
       }
 
       if (!QrCode) {
-        requestAnimationFrame(scanFrame)
+        scanFrameId = requestAnimationFrame(scanFrame)
         return
       }
       const qr = new QrCode()
+      // Capturer la valeur réactive avant le callback
+      const currentLastScannedCode = lastScannedCode()
       qr.callback = (err: Error | null, value: { result: string } | null) => {
         if (err) {
-          requestAnimationFrame(scanFrame)
+          scanFrameId = requestAnimationFrame(scanFrame)
           return
         }
 
         if (value) {
-          handleQRCodeScanned(value.result)
+          // Ignorer si c'est le même code que le dernier scanné
+          if (value.result !== currentLastScannedCode) {
+            handleQRCodeScanned(value.result)
+          }
+          // Continuer le scan dans tous les cas
+          scanFrameId = requestAnimationFrame(scanFrame)
         } else {
-          requestAnimationFrame(scanFrame)
+          scanFrameId = requestAnimationFrame(scanFrame)
         }
       }
       qr.decode(imageData)
     }
 
-    scanFrame()
+    scanFrameId = requestAnimationFrame(scanFrame)
   }
 
   const handleQRCodeScanned = async (qrCode: string) => {
-    stopCamera()
+    // Enregistrer le code scanné pour éviter les scans multiples
+    setLastScannedCode(qrCode)
 
     const result = await scanCtrl.validateTicketByQrCode(qrCode)
     scanCtrl.addScanResult(result)
