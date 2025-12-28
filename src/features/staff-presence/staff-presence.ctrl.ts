@@ -13,7 +13,7 @@ export const useStaffPresence = (): StaffPresenceCtrlReturn => {
   const [isLoading, setIsLoading] = createSignal<boolean>(false)
   const [error, setError] = createSignal<string | null>(null)
 
-  // Initialiser les filtres depuis l'URL
+
   const getInitialFilter = (): StaffPresenceFilter => {
     const urlParams = getAllURLParams()
     return {
@@ -93,11 +93,9 @@ export const useStaffPresence = (): StaffPresenceCtrlReturn => {
         params.append('end_date', dateRange.end)
       }
     } else {
-      // Sinon utiliser les filtres
-      // Si start_date est défini, l'envoyer
+
       if (filters.start_date) {
         params.append('start_date', filters.start_date)
-        // Si end_date est défini, l'envoyer aussi (même si c'est la même date)
         if (filters.end_date) {
           params.append('end_date', filters.end_date)
         }
@@ -105,16 +103,12 @@ export const useStaffPresence = (): StaffPresenceCtrlReturn => {
       // Si pas de start_date, ne rien envoyer (pas de filtre de date)
     }
 
-    // Les autres filtres ne sont pas dans l'API, on les garde pour le filtrage côté client si besoin
-    // if (filters.period) params.append('period', filters.period)
-    // if (filters.member_id) params.append('member_id', filters.member_id)
-    // if (filters.refused !== undefined) params.append('refused', String(filters.refused))
-
     return params.toString()
   }
 
-  const getPresences = async (view?: 'month' | 'week' | 'day' | 'list', selectedDate?: Date) => {
-    if (isLoading()) return
+  const getPresences = async (view?: 'month' | 'week' | 'day' | 'list', selectedDate?: Date, force = false) => {
+    // Permettre le rechargement forcé même si une requête est en cours
+    if (!force && isLoading()) return
 
     setIsLoading(true)
     setIsFetching(true)
@@ -242,8 +236,12 @@ export const useStaffPresence = (): StaffPresenceCtrlReturn => {
       }
 
       toast.success('Succès', 'Présence créée avec succès')
-      // Recharger les données
-      await getPresences(filter().view, new Date())
+      const currentFilter = filter()
+      if (currentFilter.view && currentFilter.start_date) {
+        await getPresences(undefined, undefined, true)
+      } else {
+        await getPresences(currentFilter.view || 'month', new Date(), true)
+      }
     } catch (err) {
       const msg = typeof err === 'string' ? err : err instanceof Error ? err.message : 'Une erreur est survenue'
       setError(msg)
@@ -257,8 +255,6 @@ export const useStaffPresence = (): StaffPresenceCtrlReturn => {
     setIsLoading(true)
     setError(null)
     try {
-      // Si on met à jour seulement la période, utiliser PATCH sur l'endpoint principal
-      // Si on met à jour le statut refused, utiliser PUT sur /refuse
       if (data.refused !== undefined) {
         const response = await fetch(
           `${clientEnv.VITE_OCELOT_URL}/museum/member-presences/${id}/refuse`,
@@ -276,7 +272,6 @@ export const useStaffPresence = (): StaffPresenceCtrlReturn => {
           throw new Error('Erreur lors de la mise à jour du statut de la présence')
         }
       } else if (data.period) {
-        // Pour mettre à jour la période, on peut utiliser POST (qui crée ou met à jour)
         const currentPresence = presences().find(p => p.id === id)
         if (currentPresence) {
           const response = await fetch(
@@ -301,8 +296,12 @@ export const useStaffPresence = (): StaffPresenceCtrlReturn => {
       }
 
       toast.success('Succès', 'Présence mise à jour avec succès')
-      // Recharger les données
-      await getPresences(filter().view, new Date())
+      const currentFilter = filter()
+      if (currentFilter.view && currentFilter.start_date) {
+        await getPresences(undefined, undefined, true)
+      } else {
+        await getPresences(currentFilter.view || 'month', new Date(), true)
+      }
     } catch (err) {
       const msg = typeof err === 'string' ? err : err instanceof Error ? err.message : 'Une erreur est survenue'
       setError(msg)
@@ -332,8 +331,12 @@ export const useStaffPresence = (): StaffPresenceCtrlReturn => {
       }
 
       toast.success('Succès', 'Présence supprimée avec succès')
-      // Recharger les données
-      await getPresences(filter().view, new Date())
+      const currentFilter = filter()
+      if (currentFilter.view && currentFilter.start_date) {
+        await getPresences(undefined, undefined, true)
+      } else {
+        await getPresences(currentFilter.view || 'month', new Date(), true)
+      }
     } catch (err) {
       const msg = typeof err === 'string' ? err : err instanceof Error ? err.message : 'Une erreur est survenue'
       setError(msg)
@@ -347,7 +350,6 @@ export const useStaffPresence = (): StaffPresenceCtrlReturn => {
     await updatePresence(id, { refused })
   }
 
-  // Transformer les présences en CalendarEvent pour l'affichage dans le calendrier
   const presencesAsEvents = createMemo((): CalendarEvent[] => {
     const presencesList = presences()
     if (presencesList.length === 0) {
@@ -361,12 +363,10 @@ export const useStaffPresence = (): StaffPresenceCtrlReturn => {
         both: 'Journée complète',
       }
 
-      // Parser la date correctement (format YYYY-MM-DD)
       const dateStr = presence.date
       const [year, month, day] = dateStr.split('-').map(Number)
       const date = new Date(year, month - 1, day, 0, 0, 0, 0)
 
-      // Ne pas afficher le nom si c'est l'utilisateur connecté
       const isCurrentUser = auth.id === presence.user_id
       const userName = isCurrentUser ? '' : `${presence.user_name} - `
 
@@ -385,7 +385,6 @@ export const useStaffPresence = (): StaffPresenceCtrlReturn => {
     })
   })
 
-  // Charger les données au montage
   onMount(() => {
     const currentFilter = filter()
     if (currentFilter.view) {

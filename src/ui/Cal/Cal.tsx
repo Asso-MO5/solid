@@ -71,6 +71,7 @@ export function Cal(props: CalProps) {
       {calendar.view() === 'list' ? (
         <CalList
           events={calendar.listEvents()}
+          calendarDays={calendar.calendarDays()}
           onItemClick={handleItemClick}
           renderItem={(event) => props.renderItem?.(event, event.startDate)}
           highlightedEventId={props.highlightedEventId}

@@ -31,6 +31,7 @@ export const StaffPresenceTable = (props: StaffPresenceTableProps) => {
   const canAdmin = useCan({ bureau: true })
   const days = () => props.ctrl.days()
 
+
   return (
     <div class="overflow-x-auto">
       <table class="w-full border-collapse">

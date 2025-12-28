@@ -48,6 +48,16 @@
     @apply cursor-not-allowed opacity-50 bg-secondary;
   }
 
+  button.ghost {
+    @apply bg-transparent text-primary hover:bg-primary/10 border-primary/20;
+  }
+  button.ghost:hover {
+    @apply bg-primary/10 text-primary;
+  }
+  button.ghost:disabled {
+    @apply cursor-not-allowed opacity-50 bg-transparent text-primary;
+  }
+
   button.cancel {
     @apply border-primary bg-bg hover:border-secondary text-primary hover:text-secondary;
   }

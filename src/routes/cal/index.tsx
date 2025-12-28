@@ -23,6 +23,7 @@ const AdminEventsList = () => {
   const modal = ModalCtrl()
   const canMember = useCan({ member: true })
   const [previousDate, setPreviousDate] = createSignal<Date | null>(null)
+  const [previousView, setPreviousView] = createSignal<string | null>(null)
   const [searchParams] = useSearchParams()
   const [highlightedEventId, setHighlightedEventId] = createSignal<string | null>(null)
 
@@ -65,11 +66,18 @@ const AdminEventsList = () => {
     const currentView = calendar.view()
     const currentDate = calendar.selectedDate()
     const prevDate = previousDate()
+    const prevView = previousView()
+
+    // Vérifier si la vue a changé
+    const viewChanged = prevView !== null && prevView !== currentView
 
     // Comparer selon la vue
     let shouldRefresh = false
 
-    if (currentView === 'month') {
+    if (viewChanged) {
+      // Si la vue change, toujours refresh
+      shouldRefresh = true
+    } else if (currentView === 'month') {
       // En vue mois, on ne refresh que si le mois/année change
       shouldRefresh = !prevDate ||
         prevDate.getMonth() !== currentDate.getMonth() ||
@@ -89,6 +97,7 @@ const AdminEventsList = () => {
 
     if (shouldRefresh) {
       setPreviousDate(currentDate)
+      setPreviousView(currentView)
       getEvents(currentView, currentDate)
       // Les membres voient leurs présences, les admins voient toutes les présences
       if (canMember() || canAdmin()) {
