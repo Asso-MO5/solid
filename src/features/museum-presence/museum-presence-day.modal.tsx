@@ -1,5 +1,6 @@
 import { For, Show } from "solid-js"
 import type { MuseumPresenceDay } from "./museum-presence.types"
+import { useCan } from "../auth/can.ctrl"
 
 interface MuseumPresenceDayModalProps {
   day: MuseumPresenceDay
@@ -11,6 +12,7 @@ export const MuseumPresenceDayModal = (props: MuseumPresenceDayModalProps) => {
 
   const acceptedPresences = () => props.day.all_presences?.filter(p => !p.refused) || []
   const refusedPresences = () => props.day.all_presences?.filter(p => p.refused) || []
+  const canAdmin = useCan({ bureau: true })
 
   return (
     <div class="flex flex-col gap-4">
@@ -40,14 +42,16 @@ export const MuseumPresenceDayModal = (props: MuseumPresenceDayModalProps) => {
                       <span class="text-sm font-medium text-gray-900">
                         {presence.user_name}
                       </span>
-                      <button
-                        type="button"
-                        onClick={() => props.onToggleRefuse(presence.id, true)}
-                        disabled={props.isLoading}
-                        class="secondary text-xs"
-                      >
-                        Refuser
-                      </button>
+                      <Show when={canAdmin()}>
+                        <button
+                          type="button"
+                          onClick={() => props.onToggleRefuse(presence.id, true)}
+                          disabled={props.isLoading}
+                          class="secondary text-xs"
+                        >
+                          Refuser
+                        </button>
+                      </Show>
                     </div>
                   )}
                 </For>
@@ -55,7 +59,7 @@ export const MuseumPresenceDayModal = (props: MuseumPresenceDayModalProps) => {
             </div>
           </Show>
 
-          <Show when={refusedPresences().length > 0}>
+          <Show when={refusedPresences().length > 0 && canAdmin()}>
             <div>
               <h4 class="text-sm font-semibold text-gray-700 mb-2">
                 Présences refusées ({refusedPresences().length})
