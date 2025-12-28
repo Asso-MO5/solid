@@ -113,12 +113,11 @@ export const EventsCtrl = () => {
       return
     }
 
-    // Construire l'URL avec les paramètres de date
+    // Construire l'URL avec les paramètres de date uniquement (pas de view)
     const dateRange = getDateRange(view, selectedDate)
     const params = new URLSearchParams({
       start_date: dateRange.start,
-      end_date: dateRange.end,
-      view: view
+      end_date: dateRange.end
     })
     const url = `${clientEnv.VITE_OCELOT_URL}/museum/calendar?${params.toString()}`
     const requestKey = `${view}-${dateRange.start}-${dateRange.end}`

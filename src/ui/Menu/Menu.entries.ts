@@ -8,7 +8,7 @@ export const menuEntries: MenuEntry[] = [
     entries: [],
   },
   {
-    label: 'Musée',
+    label: 'Musée (admin)',
     href: '/museum',
     roles: ['museum', 'dev', "bureau"],
     entries: [
@@ -40,8 +40,22 @@ export const menuEntries: MenuEntry[] = [
         label: 'Présence des membres',
         href: '/museum/staff-presence',
       },
+
     ],
   },
+  {
+    label: 'Musée',
+    href: '/events',
+    roles: ['membres mo5'],
+    entries: [
+      {
+        label: 'Ma présence au musée',
+        href: '/museum/presence',
+
+      },
+    ],
+  },
+  /*
   {
     label: 'Événements',
     href: '/events',
@@ -53,5 +67,6 @@ export const menuEntries: MenuEntry[] = [
       },
     ],
   },
+  */
 
 ]

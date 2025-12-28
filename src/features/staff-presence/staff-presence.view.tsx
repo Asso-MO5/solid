@@ -15,6 +15,7 @@ export const StaffPresenceView = () => {
 
   const handleCreate = async (data: CreatePresenceData) => {
     await ctrl.createPresence(data)
+
     modal.close()
   }
 

@@ -4,6 +4,7 @@ import { statsWsHandler } from './stats.ws-handler'
 import { StatCard } from '~/ui/stat-card'
 import { useCan } from '../auth/can.ctrl'
 import type { VisitorSlotStat } from './stats.type'
+import { MuseumPresenceView } from '../museum-presence/museum-presence.view'
 
 export const TicketStats: VoidComponent = () => {
   const canSeeBank = useCan({ bureau: true })
@@ -110,7 +111,9 @@ export const TicketStats: VoidComponent = () => {
   return (
     <>
       <Show when={!canSeeBank()}>
-        <p>{"Vous n'avez pas les permissions pour voir les statistiques."}</p>
+        <div class="col-span-full">
+          <MuseumPresenceView />
+        </div>
       </Show>
       <Show when={canSeeBank()}>
         <StatCard
