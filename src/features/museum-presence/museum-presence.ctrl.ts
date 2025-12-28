@@ -87,7 +87,7 @@ export const useMuseumPresence = (): MuseumPresenceCtrlReturn => {
       if (data.days && Array.isArray(data.days)) {
         data.days.forEach((day: { date: string, day_name: string, is_open: boolean, presences: { id: string, user_id: string, user_name: string, period: 'afternoon', refused_by_admin: boolean }[] }) => {
           const myPresence = day.presences?.find((p: { user_id: string }) => p.user_id === userId)
-          const allPresences = canAdmin() ? day.presences || [] : []
+          const allPresences = day.presences || []
 
           transformedDays.push({
             date: day.date,
@@ -98,13 +98,13 @@ export const useMuseumPresence = (): MuseumPresenceCtrlReturn => {
               period: 'afternoon' as const,
               refused: myPresence.refused_by_admin || false
             } : undefined,
-            all_presences: canAdmin() ? allPresences.map((p: { id: string, user_id: string, user_name: string, period: 'afternoon', refused_by_admin: boolean }) => ({
+            all_presences: allPresences.map((p: { id: string, user_id: string, user_name: string, period: 'afternoon', refused_by_admin: boolean }) => ({
               id: p.id,
               user_id: p.user_id,
               user_name: p.user_name,
               period: 'afternoon' as const,
               refused: p.refused_by_admin || false
-            })) : undefined
+            }))
           })
         })
       }

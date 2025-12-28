@@ -123,7 +123,6 @@ export const MuseumPresenceView = () => {
                                 </span>
                               </Show>
                             </div>
-
                             <Show when={day.all_presences && (day.all_presences.length ?? 0) > 0}>
                               <button
                                 type="button"
@@ -133,7 +132,6 @@ export const MuseumPresenceView = () => {
                                 Voir présences ({day.all_presences?.length ?? 0})
                               </button>
                             </Show>
-
                             <Show when={day.is_open && !past}>
                               <div class="flex items-center gap-2 justify-center">
                                 <button
