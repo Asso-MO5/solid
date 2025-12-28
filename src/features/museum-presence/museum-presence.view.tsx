@@ -135,7 +135,7 @@ export const MuseumPresenceView = () => {
                             <Show when={day.is_open && !past}>
                               <div class="flex items-center gap-2 justify-center">
                                 <button
-                                  class={`${iAmPresent ? 'secondary text-xs' : ''} text-sm`}
+                                  class={`${iAmPresent ? 'secondary-ghost text-xs' : ''} text-sm`}
                                   onClick={() => ctrl.togglePresence(day.date)} aria-busy={ctrl.isLoading()} disabled={ctrl.isLoading()}>{
                                     !iAmPresent ? 'Participation à la médiation' : 'Annuler ma présence'
                                   }</button>
