@@ -1,13 +1,12 @@
 import { For, Show } from "solid-js"
 import { useMuseumPresence } from "./museum-presence.ctrl"
-import { useCan } from "~/features/auth/can.ctrl"
 import { ModalCtrl } from "~/ui/Modal/Modal.ctrl"
 import { MuseumPresenceDayModal } from "./museum-presence-day.modal"
 import type { MuseumPresenceDay } from "./museum-presence.types"
 
 export const MuseumPresenceView = () => {
   const ctrl = useMuseumPresence()
-  const canAdmin = useCan({ bureau: true })
+
   const modal = ModalCtrl()
 
   const formatDate = (dateStr: string): string => {
@@ -125,7 +124,7 @@ export const MuseumPresenceView = () => {
                               </Show>
                             </div>
 
-                            <Show when={canAdmin() && day.all_presences && (day.all_presences.length ?? 0) > 0}>
+                            <Show when={day.all_presences && (day.all_presences.length ?? 0) > 0}>
                               <button
                                 type="button"
                                 onClick={() => openPresencesModal(day)}
@@ -140,7 +139,7 @@ export const MuseumPresenceView = () => {
                                 <button
                                   class={`${iAmPresent ? 'secondary text-xs' : ''} text-sm`}
                                   onClick={() => ctrl.togglePresence(day.date)} aria-busy={ctrl.isLoading()} disabled={ctrl.isLoading()}>{
-                                    !iAmPresent ? 'Je suis Présent(e)' : 'Annuler ma présence'
+                                    !iAmPresent ? 'Participation à la médiation' : 'Annuler ma présence'
                                   }</button>
                               </div>
                             </Show>
