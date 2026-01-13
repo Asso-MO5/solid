@@ -11,6 +11,7 @@ const url = {
 
 export const statsWsHandler = async (room: keyof typeof url) => {
 
+
   const response = await fetch(`${clientEnv.VITE_OCELOT_URL}${url[room]}`, {
     credentials: 'include',
     headers: {
@@ -23,6 +24,10 @@ export const statsWsHandler = async (room: keyof typeof url) => {
   }
 
   const data = await response.json();
+  if (room === 'tickets_stats') {
+    statsWsHandler('bank_stats');
+    statsWsHandler('visitors_stats');
+  }
 
   if (room === 'bank_stats' || room === 'visitors_stats') {
     setStats(room, data);
