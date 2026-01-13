@@ -17,5 +17,5 @@ export const clientScheme = z.object({
   VITE_AUTH_PATH: z.string().optional(),
   VITE_ENTITY_NAME: z.string().optional(),
   VITE_OCELOT_URL: z.string().default('https://ocelot.mo5.com'),
-  VITE_OCELOT_WS: z.string().default('wss://ocelot.mo5.com/ws'),
+  VITE_WS: z.string().default('wss://ocelot.mo5.com/ws'),
 });
