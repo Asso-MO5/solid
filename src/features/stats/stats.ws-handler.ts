@@ -1,6 +1,6 @@
 import { clientEnv } from "~/env/client"
 import { setStats } from "./stats.store";
-import { createSignal } from "solid-js";
+import { createStore } from "solid-js/store";
 
 const url = {
   current_visitors: `/museum/capacity/current`,
@@ -9,11 +9,17 @@ const url = {
   visitors_stats: "/museum/tickets/weekly-slots-stats"
 }
 
-const [isLoading, setIsLoading] = createSignal(false);
+
+const [loading, setLoading] = createStore<Record<keyof typeof url, boolean>>({
+  current_visitors: false,
+  bank_stats: false,
+  tickets_stats: false,
+  visitors_stats: false
+});
 
 export const statsWsHandler = async (room: keyof typeof url) => {
-  if (isLoading()) return;
-  setIsLoading(true);
+  if (loading[room]) return;
+  setLoading(room, true);
 
   try {
 
@@ -42,6 +48,6 @@ export const statsWsHandler = async (room: keyof typeof url) => {
   } catch (error) {
     console.error(error);
   } finally {
-    setIsLoading(false);
+    setLoading(room, false);
   }
 }
