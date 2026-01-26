@@ -187,8 +187,6 @@ export const TicketsTable = (props: TicketsTableProps) => {
                 const checkoutId = ticket?.checkout_id as string | undefined
                 const showResend = checkoutId && ticket.status === 'paid'
                 const ticketsInCheckout = checkoutId ? (ticketsByCheckout().get(checkoutId) || []) : []
-
-                console.log(showResend, checkoutId, ticket)
                 return (
                   <tr class="border-b border-gray-100 hover:bg-gray-50">
                     <td class="px-4 py-3">
