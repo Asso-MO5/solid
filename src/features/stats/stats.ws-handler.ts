@@ -4,7 +4,6 @@ import { createStore } from "solid-js/store";
 
 const url = {
   current_visitors: `/museum/capacity/current`,
-  bank_stats: '/pay/stats',
   tickets_stats: '/museum/tickets/stats',
   visitors_stats: "/museum/tickets/weekly-slots-stats"
 }
@@ -12,7 +11,6 @@ const url = {
 
 const [loading, setLoading] = createStore<Record<keyof typeof url, boolean>>({
   current_visitors: false,
-  bank_stats: false,
   tickets_stats: false,
   visitors_stats: false
 });
@@ -35,16 +33,8 @@ export const statsWsHandler = async (room: keyof typeof url) => {
     }
 
     const data = await response.json();
-    if (room === 'tickets_stats') {
-      statsWsHandler('bank_stats');
-      statsWsHandler('visitors_stats');
-    }
+    setStats(room, data[room]);
 
-    if (room === 'bank_stats' || room === 'visitors_stats') {
-      setStats(room, data);
-    } else {
-      setStats(room, data[room]);
-    }
   } catch (error) {
     console.error(error);
   } finally {

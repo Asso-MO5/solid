@@ -11,12 +11,11 @@ export const TicketStats: VoidComponent = () => {
   const canSeeVisitors = useCan({ bureau: true })
   onMount(() => {
     statsWsHandler('tickets_stats')
-    statsWsHandler('bank_stats')
     statsWsHandler('visitors_stats')
   })
 
   const ticketsStats = () => stats.tickets_stats
-  const bankStats = () => stats.bank_stats
+  const paymentStats = () => stats.tickets_stats.payment_stats
   const visitorsStats = () => stats.visitors_stats
 
   const visitorsByDay = createMemo(() => {
@@ -34,7 +33,6 @@ export const TicketStats: VoidComponent = () => {
       }
     >()
 
-    // Créer un Map pour les daily_totals pour accès rapide
     const dailyTotalsMap = new Map<string, number>()
     if (visitors.daily_totals) {
       for (const daily of visitors.daily_totals) {
@@ -45,7 +43,6 @@ export const TicketStats: VoidComponent = () => {
     for (const slot of visitors.slots_stats) {
       const existing = byDate.get(slot.date)
       if (!existing) {
-        // Utiliser total_unique_tickets depuis daily_totals si disponible, sinon 0
         const totalUniqueTickets = dailyTotalsMap.get(slot.date) ?? 0
         byDate.set(slot.date, {
           date: slot.date,
@@ -57,7 +54,6 @@ export const TicketStats: VoidComponent = () => {
       } else {
         existing.slots.push(slot)
         existing.totalCapacity += slot.capacity
-        // totalExpected reste celui de daily_totals, pas besoin de l'incrémenter
       }
     }
 
@@ -80,7 +76,6 @@ export const TicketStats: VoidComponent = () => {
     }
   }
 
-  // Données pour les graphiques
   const weekTicketsChart = createMemo(() => {
     const stats = ticketsStats()
     if (!stats?.week_tickets_by_day) return []
@@ -141,30 +136,29 @@ export const TicketStats: VoidComponent = () => {
           unitPlural="€"
         />
         <StatCard
-          title="Total"
-          value={bankStats()?.total_all_time ?? 0}
+          title={`Total ${new Date(new Date().setDate(new Date().getDate() - new Date().getDay())).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}`}
+          value={paymentStats()?.total_day ?? 0}
           unit="€"
           unitPlural="€"
         />
         <StatCard
-          title="Jour"
-          value={bankStats()?.total_day ?? 0}
+          title={`Total de la semaine`}
+          value={paymentStats()?.total_week ?? 0}
           unit="€"
           unitPlural="€"
         />
         <StatCard
-          title="Semaine"
-          value={bankStats()?.total_week ?? 0}
+          title={`Total ${new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}`}
+          value={paymentStats()?.total_month ?? 0}
           unit="€"
           unitPlural="€"
         />
         <StatCard
-          title="Mois"
-          value={bankStats()?.total_month ?? 0}
+          title={`Total ${new Date().getFullYear()}`}
+          value={paymentStats()?.total_year ?? 0}
           unit="€"
           unitPlural="€"
         />
-
         <div class="col-span-full">
           <Show when={visitorsByDay().length && canSeeVisitors()}>
             <div class="lg:grid-cols-4 md:grid-cols-2 mt-4 grid grid-cols-1 gap-4 w-full">

@@ -13,6 +13,12 @@ export type TicketsStats = {
     tickets_count: number;
     percentage: number;
   }[];
+  payment_stats: {
+    total_year: number;
+    total_month: number;
+    total_week: number;
+    total_day: number;
+  }
   grouped_reservations: {
     total_checkouts: number;
     average_tickets_per_checkout: number;
@@ -66,7 +72,6 @@ export type VisitorsStats = {
 
 export type Stats = {
   current_visitors: number;
-  bank_stats: BankStats;
   tickets_stats: TicketsStats;
   visitors_stats: VisitorsStats | null;
 }

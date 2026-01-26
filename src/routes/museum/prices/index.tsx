@@ -9,7 +9,7 @@ const PricePage = () => {
   const { isLoading, getPrices, upsertPrice } = usePrices()
 
   onMount(() => {
-    getPrices()
+    can() && getPrices()
   })
 
   return (

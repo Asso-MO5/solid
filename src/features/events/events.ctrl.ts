@@ -107,13 +107,10 @@ export const EventsCtrl = () => {
   }
 
   const getEvents = async (view?: CalendarView, selectedDate?: Date) => {
-    // Éviter les appels inutiles si pas de paramètres
     if (!view || !selectedDate) {
-      console.log('Skipping getEvents: missing view or date')
       return
     }
 
-    // Construire l'URL avec les paramètres de date uniquement (pas de view)
     const dateRange = getDateRange(view, selectedDate)
     const params = new URLSearchParams({
       start_date: dateRange.start,
