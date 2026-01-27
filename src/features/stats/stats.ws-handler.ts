@@ -33,7 +33,8 @@ export const statsWsHandler = async (room: keyof typeof url) => {
     }
 
     const data = await response.json();
-    setStats(room, data[room]);
+    const roomData = room === 'visitors_stats' ? data : data[room]
+    setStats(room, roomData);
 
   } catch (error) {
     console.error(error);
