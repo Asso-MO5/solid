@@ -13,6 +13,7 @@ import { Show, createEffect, createMemo, createSignal, onMount } from "solid-js"
 import { useSearchParams } from "@solidjs/router"
 import { useCan } from "~/features/auth/can.ctrl"
 import type { CalendarEvent } from "~/ui/Cal/Cal.types"
+import { deleteEventById } from "~/features/events/EventDetails.ctrl"
 
 const AdminEventsList = () => {
 
@@ -132,6 +133,11 @@ const AdminEventsList = () => {
     // Ne pas fermer la modale, juste recharger les données
   }
 
+  const handleDeleteEvent = async (eventId: string) => {
+    await deleteEventById(eventId)
+    getEvents(calendar.view(), calendar.selectedDate(), canAdmin(), true)
+  }
+
   // Handler pour ouvrir la modale unifiée
   const openDayDetailsModal = async (day: Date, event?: CalendarEvent) => {
     // Recharger les présences pour ce jour spécifique
@@ -160,6 +166,7 @@ const AdminEventsList = () => {
             await presenceCtrl.toggleRefuse(id, refused)
             await presenceCtrl.getPresences('day', day)
           }}
+          onDeleteEvent={canAdmin() ? handleDeleteEvent : undefined}
           onClose={() => modal.close()}
         />
       ),
@@ -219,7 +226,7 @@ const AdminEventsList = () => {
               highlightedEventId={highlightedEventId()}
               showMembersCount={canAdmin()}
               onEventCreated={() => {
-                getEvents(calendar.view(), calendar.selectedDate(), canAdmin())
+                getEvents(calendar.view(), calendar.selectedDate(), canAdmin(), true)
               }}
               onDayClick={handlePresenceClick}
               onItemClick={handleItemClick}

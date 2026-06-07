@@ -1,4 +1,4 @@
-import { For, Show, createSignal } from "solid-js"
+import { For, Show, createSignal, createMemo } from "solid-js"
 import { StaffPresenceFormModal } from "~/features/staff-presence/staff-presence-form.modal"
 import type { CalendarDay, CalendarEvent } from "~/ui/Cal/Cal.types"
 import type { CreatePresenceData, UpdatePresenceData } from "~/features/staff-presence/staff-presence.types"
@@ -14,6 +14,7 @@ interface DayDetailsModalProps {
   onUpdatePresence?: (id: string, data: UpdatePresenceData) => Promise<void>
   onDeletePresence?: (id: string) => Promise<void>
   onToggleRefuse?: (id: string, refused: boolean) => Promise<void>
+  onDeleteEvent?: (eventId: string) => Promise<void>
   onClose: () => void
 }
 
@@ -41,6 +42,24 @@ export const DayDetailsModal = (props: DayDetailsModalProps) => {
   }
 
   const [activeTab, setActiveTab] = createSignal<Tab>(getInitialTab())
+  const [confirmDelete, setConfirmDelete] = createSignal(false)
+  const [deleting, setDeleting] = createSignal(false)
+
+  const canDeleteEvent = createMemo(() =>
+    !!props.onDeleteEvent && !!props.event && !props.event.id.startsWith('presence-')
+  )
+
+  const handleDeleteEvent = async () => {
+    if (!props.event || !props.onDeleteEvent) return
+    setDeleting(true)
+    try {
+      await props.onDeleteEvent(props.event.id)
+      props.onClose()
+    } finally {
+      setDeleting(false)
+      setConfirmDelete(false)
+    }
+  }
 
   // Calculer dateStr de manière réactive (sans décalage de fuseau horaire)
   const dateStr = () => {
@@ -209,6 +228,39 @@ export const DayDetailsModal = (props: DayDetailsModalProps) => {
                     </span>
                   </div>
                 </div>
+
+                <Show when={canDeleteEvent()}>
+                  <div class="mt-6 pt-4 border-t border-gray-100">
+                    <Show
+                      when={confirmDelete()}
+                      fallback={
+                        <button
+                          class="danger-outline text-sm"
+                          onClick={() => setConfirmDelete(true)}
+                        >
+                          Supprimer l'événement
+                        </button>
+                      }
+                    >
+                      <div class="flex items-center gap-3">
+                        <span class="text-sm text-gray-700">Confirmer la suppression ?</span>
+                        <button
+                          class="danger text-sm"
+                          disabled={deleting()}
+                          onClick={handleDeleteEvent}
+                        >
+                          {deleting() ? 'Suppression…' : 'Confirmer'}
+                        </button>
+                        <button
+                          class="cancel text-sm"
+                          onClick={() => setConfirmDelete(false)}
+                        >
+                          Annuler
+                        </button>
+                      </div>
+                    </Show>
+                  </div>
+                </Show>
               </div>
             </Show>
           </div>

@@ -105,7 +105,7 @@ export const EventsCtrl = () => {
     }
   }
 
-  const getEvents = async (view?: CalendarView, selectedDate?: Date, includePrivate = false) => {
+  const getEvents = async (view?: CalendarView, selectedDate?: Date, includePrivate = false, forceRefresh = false) => {
     if (!view || !selectedDate) {
       return
     }
@@ -119,8 +119,8 @@ export const EventsCtrl = () => {
     const url = `${clientEnv.VITE_OCELOT_URL}/museum/calendar?${params.toString()}`
     const requestKey = `${view}-${dateRange.start}-${dateRange.end}-${includePrivate}`
 
-    // Éviter les requêtes en double
-    if (lastRequestParams === requestKey) {
+    // Éviter les requêtes en double (sauf si forceRefresh)
+    if (!forceRefresh && lastRequestParams === requestKey) {
       return
     }
 

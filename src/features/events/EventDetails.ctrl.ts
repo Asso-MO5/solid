@@ -1,15 +1,26 @@
 import { createSignal, type Accessor } from "solid-js"
 import { useNavigate } from "@solidjs/router"
 import type { CalendarEvent } from "~/ui/Cal/Cal.types"
+import { clientEnv } from "~/env/client"
 
 const [selectedEvent, setSelectedEvent] = createSignal<CalendarEvent | null>(null)
 const [isOpen, setIsOpen] = createSignal(false)
+
+export async function deleteEventById(id: string): Promise<void> {
+  const response = await fetch(`${clientEnv.VITE_OCELOT_URL}/events/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}))
+    throw new Error(body.message || `Erreur HTTP ${response.status}`)
+  }
+}
 
 export function EventDetailsCtrl() {
   const navigate = useNavigate()
 
   const openEvent = (event: CalendarEvent) => {
-    // Toujours ouvrir le modal, que ce soit sur mobile ou desktop
     setSelectedEvent(event)
     setIsOpen(true)
   }
@@ -19,22 +30,17 @@ export function EventDetailsCtrl() {
     setSelectedEvent(null)
   }
 
-
-
   const viewEvent = (event: CalendarEvent) => {
-    // Naviguer vers la page de lecture seule
     navigate(`/admin/cal/${event.id}`)
     closeEvent()
   }
 
   const deleteEvent = (event: CalendarEvent) => {
-    // TODO: Implémenter la suppression
     console.log('Delete event:', event.id)
     closeEvent()
   }
 
   const duplicateEvent = (event: CalendarEvent) => {
-    // TODO: Implémenter la duplication
     console.log('Duplicate event:', event.id)
     closeEvent()
   }
