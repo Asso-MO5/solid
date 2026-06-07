@@ -3,6 +3,7 @@ import type { CalDayProps } from "./CalDay.types"
 
 export const CalDay = (props: CalDayProps) => {
   const [isMobile, setIsMobile] = createSignal(false)
+  const [hoveredItemId, setHoveredItemId] = createSignal<string | null>(null)
 
   onMount(() => {
     const checkMobile = () => {
@@ -70,10 +71,15 @@ export const CalDay = (props: CalDayProps) => {
                           class="text-xs p-1 rounded cursor-pointer mb-1"
                           data-highlighted={props.highlightedEventId === event.id ? 'true' : 'false'}
                           style={{
-                            'background-color': event.color ? `${event.color}20` : '#dbeafe',
+                            'background-color': hoveredItemId() === event.id
+                              ? (event.color ? `${event.color}40` : '#bfdbfe')
+                              : (event.color ? `${event.color}20` : '#dbeafe'),
                             'color': event.color || '#1e40af',
-                            'border-left': `3px solid ${event.color || '#3b82f6'}`
+                            'border-left': `3px solid ${event.color || '#3b82f6'}`,
+                            'transition': 'background-color 150ms ease',
                           }}
+                          onMouseEnter={() => setHoveredItemId(event.id)}
+                          onMouseLeave={() => setHoveredItemId(null)}
                           onClick={(e) => {
                             e.stopPropagation()
                             props.onItemClick?.(event)
@@ -157,10 +163,15 @@ export const CalDay = (props: CalDayProps) => {
                     class="text-xs p-1 rounded cursor-pointer"
                     data-highlighted={props.highlightedEventId === item.id ? 'true' : 'false'}
                     style={{
-                      'background-color': item.color ? `${item.color}20` : '#dbeafe',
+                      'background-color': hoveredItemId() === item.id
+                        ? (item.color ? `${item.color}40` : '#bfdbfe')
+                        : (item.color ? `${item.color}20` : '#dbeafe'),
                       'color': item.color || '#1e40af',
-                      'border-left': `3px solid ${item.color || '#3b82f6'}`
+                      'border-left': `3px solid ${item.color || '#3b82f6'}`,
+                      'transition': 'background-color 150ms ease',
                     }}
+                    onMouseEnter={() => setHoveredItemId(item.id)}
+                    onMouseLeave={() => setHoveredItemId(null)}
                     onClick={(e) => {
                       e.stopPropagation()
                       props.onItemClick?.(item)

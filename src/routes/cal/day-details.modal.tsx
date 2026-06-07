@@ -184,9 +184,14 @@ export const DayDetailsModal = (props: DayDetailsModalProps) => {
             {/* Détails de l'événement */}
             <Show when={props.event && !props.event.id.startsWith('presence-')}>
               <div class="border-t border-gray-200 pt-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-3">Détails de l'événement</h3>
+                <h3
+                  class="text-xl font-bold text-gray-900 mb-1 pl-3 border-l-4"
+                  style={{ 'border-color': props.event!.color || '#3b82f6' }}
+                >
+                  {props.event!.title}
+                </h3>
                 <Show when={props.event?.description}>
-                  <p class="text-gray-700 mb-4">{props.event!.description}</p>
+                  <p class="text-gray-600 mb-4 pl-3">{props.event!.description}</p>
                 </Show>
                 <div class="space-y-2">
                   <div>
