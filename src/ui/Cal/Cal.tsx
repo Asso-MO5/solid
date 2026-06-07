@@ -39,19 +39,7 @@ export function Cal(props: CalProps) {
   })
 
   const handleDayClick = (day: Date, hour?: number) => {
-    // Toujours appeler onDayClick si défini (pour les présences par exemple)
     props.onDayClick?.(day, hour)
-
-    // Pour les événements, vérifier les permissions
-    if (!props.canCreateEvent) return
-
-    let dateWithTime = day
-    if (hour !== undefined) {
-      dateWithTime = new Date(day)
-      dateWithTime.setHours(hour, 0, 0, 0) // Heure exacte, minutes à 0
-    }
-
-    eventCreate.openCreateModal(dateWithTime)
   }
 
   const handleEventCreated = (newEvent: CalendarEvent) => {
@@ -87,6 +75,8 @@ export function Cal(props: CalProps) {
                 handleDayClick(date, hour)
               }}
               onItemClick={handleItemClick}
+              onCreateEvent={(day) => eventCreate.openCreateModal(day)}
+              canCreateEvent={props.canCreateEvent}
               renderItem={props.renderItem}
               formatDate={calendar.formatDate}
               highlightedEventId={props.highlightedEventId}

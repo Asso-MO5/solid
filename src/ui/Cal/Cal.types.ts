@@ -40,8 +40,8 @@ export interface CalendarEvent {
   description?: string
   startDate: Date
   endDate: Date
-  category: 'video' | 'expo' | 'ag' | 'live' | 'meeting' | 'training' | 'conference' | 'other'
-  status?: 'draft' | 'published' | 'cancelled' | 'completed'
+  category: 'live' | 'mediation' | 'workshop' | 'conference' | 'exhibition' | 'other'
+  status?: 'draft' | 'private' | 'member' | 'public'
   allowedRoles?: string[]
   isConfidential?: boolean
   color?: string

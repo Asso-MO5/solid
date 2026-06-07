@@ -26,3 +26,15 @@ gitignore
 # System Files
 .DS_Store
 Thumbs.db
+yarn.lock
+.yarnrc.yml
+.mcp.json
+.mcp.json.backup
+yarn.lock
+yarn.lock
+.claude/settings.local.json.backup
+.orbitalmcp/summaries/repository-summary.txt
+.orbitalmcp/summaries/repository-summary.json
+.vscode/mcp.json
+yarn.lock
+.yarn/install-state.gz

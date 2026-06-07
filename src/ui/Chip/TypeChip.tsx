@@ -7,13 +7,11 @@ interface TypeChipProps {
 export const TypeChip = (props: TypeChipProps) => {
   const getCategoryText = (category?: string): string => {
     switch (category) {
-      case 'video': return 'Vidéo'
-      case 'expo': return 'Expo'
-      case 'ag': return 'AG'
       case 'live': return 'Live'
-      case 'meeting': return 'Réunion'
-      case 'training': return 'Formation'
+      case 'mediation': return 'Médiation'
+      case 'workshop': return 'Atelier'
       case 'conference': return 'Conférence'
+      case 'exhibition': return 'Exposition'
       case 'other': return 'Autre'
       default: return 'Non défini'
     }

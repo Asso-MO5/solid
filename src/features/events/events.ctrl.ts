@@ -79,13 +79,12 @@ export const EventsCtrl = () => {
 
   // Transformer un événement de l'API en CalendarEvent
   const transformEvent = (apiEvent: CalendarEventApi): CalendarEvent => {
-    // Construire la date de début avec l'heure si disponible
-    const startDateStr = apiEvent.start_date
+    // start_date arrives as a full ISO timestamp from node-postgres — extract date part only
+    const startDateStr = apiEvent.start_date.split('T')[0]
     const startTimeStr = apiEvent.start_time || '00:00:00'
     const startDateTime = `${startDateStr}T${startTimeStr}`
 
-    // Construire la date de fin avec l'heure si disponible
-    const endDateStr = apiEvent.end_date
+    const endDateStr = (apiEvent.end_date || apiEvent.start_date).split('T')[0]
     const endTimeStr = apiEvent.end_time || '23:59:59'
     const endDateTime = `${endDateStr}T${endTimeStr}`
 
@@ -106,7 +105,7 @@ export const EventsCtrl = () => {
     }
   }
 
-  const getEvents = async (view?: CalendarView, selectedDate?: Date) => {
+  const getEvents = async (view?: CalendarView, selectedDate?: Date, includePrivate = false) => {
     if (!view || !selectedDate) {
       return
     }
@@ -116,8 +115,9 @@ export const EventsCtrl = () => {
       start_date: dateRange.start,
       end_date: dateRange.end
     })
+    if (includePrivate) params.set('include_private', 'true')
     const url = `${clientEnv.VITE_OCELOT_URL}/museum/calendar?${params.toString()}`
-    const requestKey = `${view}-${dateRange.start}-${dateRange.end}`
+    const requestKey = `${view}-${dateRange.start}-${dateRange.end}-${includePrivate}`
 
     // Éviter les requêtes en double
     if (lastRequestParams === requestKey) {

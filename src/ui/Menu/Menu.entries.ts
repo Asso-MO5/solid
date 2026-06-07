@@ -55,11 +55,10 @@ export const menuEntries: MenuEntry[] = [
       },
     ],
   },
-  /*
   {
     label: 'Événements',
     href: '/events',
-    roles: ['membres mo5'],
+    roles: ['membres mo5', 'dev', 'bureau'],
     entries: [
       {
         label: 'Calendrier',
@@ -67,6 +66,5 @@ export const menuEntries: MenuEntry[] = [
       },
     ],
   },
-  */
 
 ]

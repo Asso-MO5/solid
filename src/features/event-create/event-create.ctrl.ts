@@ -1,4 +1,5 @@
 import { createSignal } from "solid-js"
+import { clientEnv } from "~/env/client"
 import type { EventCreateData } from "./event-create.types"
 
 /**
@@ -30,8 +31,9 @@ export function useEventCreate(onEventCreated?: () => void) {
     setError(null)
 
     try {
-      const response = await fetch('/api/events', {
+      const response = await fetch(`${clientEnv.VITE_OCELOT_URL}/events`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

@@ -11,7 +11,6 @@ import { DayDetailsModal } from "./day-details.modal"
 import type { CreatePresenceData, UpdatePresenceData } from "~/features/staff-presence/staff-presence.types"
 import { Show, createEffect, createMemo, createSignal, onMount } from "solid-js"
 import { useSearchParams } from "@solidjs/router"
-import { auth } from "~/features/auth/auth.store"
 import { useCan } from "~/features/auth/can.ctrl"
 import type { CalendarEvent } from "~/ui/Cal/Cal.types"
 
@@ -46,7 +45,7 @@ const AdminEventsList = () => {
 
   // Charger les événements et présences au montage initial
   onMount(() => {
-    getEvents(calendar.view(), calendar.selectedDate())
+    getEvents(calendar.view(), calendar.selectedDate(), canAdmin())
     // Les membres voient leurs présences, les admins voient toutes les présences
     if (canMember() || canAdmin()) {
       presenceCtrl.getPresences(calendar.view(), calendar.selectedDate())
@@ -98,7 +97,7 @@ const AdminEventsList = () => {
     if (shouldRefresh) {
       setPreviousDate(currentDate)
       setPreviousView(currentView)
-      getEvents(currentView, currentDate)
+      getEvents(currentView, currentDate, canAdmin())
       // Les membres voient leurs présences, les admins voient toutes les présences
       if (canMember() || canAdmin()) {
         presenceCtrl.getPresences(currentView, currentDate)
@@ -215,12 +214,12 @@ const AdminEventsList = () => {
           </Show>
           <Show when={!loading()}>
             <Cal
-              canCreateEvent={auth.roles?.includes('admin')}
+              canCreateEvent={canAdmin()}
               items={allItems()}
               highlightedEventId={highlightedEventId()}
               showMembersCount={canAdmin()}
               onEventCreated={() => {
-                getEvents(calendar.view(), calendar.selectedDate())
+                getEvents(calendar.view(), calendar.selectedDate(), canAdmin())
               }}
               onDayClick={handlePresenceClick}
               onItemClick={handleItemClick}

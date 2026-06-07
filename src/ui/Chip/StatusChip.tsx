@@ -8,9 +8,9 @@ export const StatusChip = (props: StatusChipProps) => {
   const getStatusText = (status?: string): string => {
     switch (status) {
       case 'draft': return 'Brouillon'
-      case 'published': return 'Publié'
-      case 'cancelled': return 'Annulé'
-      case 'completed': return 'Terminé'
+      case 'private': return 'Privé'
+      case 'member': return 'Membres'
+      case 'public': return 'Public'
       default: return 'Inconnu'
     }
   }

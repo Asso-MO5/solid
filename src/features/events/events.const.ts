@@ -1,21 +1,19 @@
-// Catégories d'événements
+// Catégories d'événements (valeurs acceptées par ocelot)
 export const EVENT_CATEGORIES = [
-  { value: 'video', label: 'Vidéo' },
-  { value: 'expo', label: 'Expo' },
-  { value: 'ag', label: 'AG' },
   { value: 'live', label: 'Live' },
-  { value: 'meeting', label: 'Réunion' },
-  { value: 'training', label: 'Formation' },
+  { value: 'mediation', label: 'Médiation' },
+  { value: 'workshop', label: 'Atelier' },
   { value: 'conference', label: 'Conférence' },
+  { value: 'exhibition', label: 'Exposition' },
   { value: 'other', label: 'Autre' }
 ] as const
 
-// Statuts d'événements
+// Statuts d'événements (visibilité, valeurs acceptées par ocelot)
 export const EVENT_STATUSES = [
   { value: 'draft', label: 'Brouillon' },
-  { value: 'published', label: 'Publié' },
-  { value: 'cancelled', label: 'Annulé' },
-  { value: 'completed', label: 'Terminé' }
+  { value: 'private', label: 'Privé' },
+  { value: 'member', label: 'Membres uniquement' },
+  { value: 'public', label: 'Public' }
 ] as const
 
 // Rôles disponibles

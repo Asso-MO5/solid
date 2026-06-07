@@ -6,10 +6,12 @@ export interface CalDayProps {
   view: CalendarView
   onDayClick: (day: Date, hour?: number) => void
   onItemClick?: (event: CalendarEvent) => void
+  onCreateEvent?: (day: Date) => void
   renderItem?: (event: CalendarEvent, day: Date) => JSX.Element
   formatDate: (date: Date) => string
   highlightedEventId?: string | null
   showMembersCount?: boolean
+  canCreateEvent?: boolean
 }
 
 export interface CalDayHourProps {

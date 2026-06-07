@@ -123,6 +123,13 @@ export const CalDay = (props: CalDayProps) => {
                 {props.formatDate(props.day.date)}
               </div>
               <div class="flex items-center gap-2">
+                <Show when={props.canCreateEvent}>
+                  <button
+                    class="text-xs bg-primary/10 text-primary hover:bg-primary hover:text-white rounded px-2 py-0.5 leading-none"
+                    onClick={(e) => { e.stopPropagation(); props.onCreateEvent?.(props.day.date) }}
+                    title="Créer un événement"
+                  >+ Événement</button>
+                </Show>
                 <Show when={props.day.paid_tickets_count !== undefined}>
                   <div class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded px-2 py-0.5">
                     {props.day.paid_tickets_count}
