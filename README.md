@@ -14,12 +14,27 @@ Suivi du travail : tickets `MO5/SOLID-*` sur htboard.
 
 ```sh
 bun install
-bun run dev          # serveur de développement
-bun run build        # build de production (.output)
-bun run start        # exécute le build (.output/server/index.mjs)
-bun run lint         # eslint
-bun run check:types  # tsc --noEmit
+bun run dev           # serveur de développement
+bun run build         # build de production (.output)
+bun run start         # exécute le build (.output/server/index.mjs)
+bun run lint          # eslint
+bun run check:types   # tsc --noEmit
+bun run test          # tests unitaires (bun test, fichiers *.spec.ts de src)
+bun run test:browser  # tests navigateur Playwright + axe-core (voir note)
 ```
+
+Vérifications à passer avant chaque commit : `lint`, `check:types`, `test`, `test:browser`.
+
+> Note : le CLI Playwright est exécuté avec Node car son chargement de config
+> reste bloqué sous Bun (observé avec bun 1.3.14). Tout le reste du projet
+> tourne avec Bun.
+
+## Tests
+
+- **Unitaires** : `*.spec.ts` à côté du code, exécutés par `bun test src`.
+- **Navigateur** : `tests/*.integration.spec.ts`, lancés par Playwright avec
+  contrôle axe-core d'accessibilité et budget de navigation (< 3 s).
+  Le premier lancement nécessite `bunx playwright install chromium`.
 
 ## Structure
 

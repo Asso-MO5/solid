@@ -4,6 +4,10 @@ node_modules
 .vinxi
 dist
 
+# tests
+test-results
+playwright-report
+
 # environnement
 .env
 .env*.local

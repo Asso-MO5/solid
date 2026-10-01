@@ -10,7 +10,9 @@
     "build": "bun --bun ./node_modules/vite/bin/vite.js build",
     "start": "bun .output/server/index.mjs",
     "lint": "bun --bun ./node_modules/eslint/bin/eslint.js \"src/**/*.{ts,tsx}\" \"vite.config.ts\"",
-    "check:types": "bun --bun ./node_modules/typescript/bin/tsc --noEmit"
+    "check:types": "bun --bun ./node_modules/typescript/bin/tsc --noEmit",
+    "test": "bun test src",
+    "test:browser": "node ./node_modules/@playwright/test/cli.js test"
   },
   "dependencies": {
     "@solidjs/meta": "0.29.4",
@@ -21,6 +23,8 @@
     "vite": "8.1.4"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.55.1",
     "@typescript-eslint/eslint-plugin": "7.6.0",
     "@typescript-eslint/parser": "7.6.0",
     "bun-types": "1.3.14",
