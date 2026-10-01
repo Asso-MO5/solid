@@ -1,0 +1,23 @@
+/* Base minimale — le design system complet est défini dans SOLID-13 */
+:root {
+	color-scheme: dark;
+	color: #e8e8e8;
+	background: #14161a;
+	font-family: system-ui, sans-serif;
+	line-height: 1.5;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+}
+
+button,
+input,
+textarea,
+select {
+	font: inherit;
+}
