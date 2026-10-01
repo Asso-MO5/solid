@@ -1,23 +1,130 @@
-/* Base minimale — le design system complet est défini dans SOLID-13 */
+/* Design system — tokens and base styles.
+   Sober, mobile-first, dark mode by default. No gradients, no decorative borders. */
+
 :root {
-	color-scheme: dark;
-	color: #e8e8e8;
-	background: #14161a;
-	font-family: system-ui, sans-serif;
-	line-height: 1.5;
+    color-scheme: dark;
+
+    /* Colors */
+    --color-bg: #14161a;
+    --color-surface: #1d2129;
+    --color-text: #e8eaf0;
+    --color-text-muted: #a8b0bd;
+    --color-border: #2a2f3a;
+    --color-accent: #8ab4ff;
+    --color-accent-hover: #a5c5ff;
+    --color-on-accent: #10131a;
+    --color-danger: #ff7a7a;
+    --color-danger-bg: rgb(255 122 122 / 12%);
+    --color-success: #6ee7a0;
+    --color-warning: #f5c96e;
+
+    /* Spacing */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+
+    /* Typography */
+    --font: system-ui, sans-serif;
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-md: 1rem;
+    --text-lg: 1.25rem;
+    --text-xl: 1.5rem;
+    --text-2xl: 2rem;
+
+    /* Shapes */
+    --radius-sm: 6px;
+    --radius: 10px;
 }
 
 * {
-	box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-	margin: 0;
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font);
+    font-size: var(--text-md);
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    margin: 0 0 var(--space-4);
+    font-weight: 600;
+    line-height: 1.2;
+    text-wrap: balance;
+}
+
+h1 {
+    font-size: var(--text-2xl);
+}
+
+h2 {
+    font-size: var(--text-xl);
+}
+
+h3 {
+    font-size: var(--text-lg);
+}
+
+p {
+    margin: 0 0 var(--space-4);
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 button,
 input,
 textarea,
 select {
-	font: inherit;
+    font: inherit;
+    color: inherit;
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+/* Page container, mobile-first */
+.container {
+    width: 100%;
+    max-width: 48rem;
+    margin-inline: auto;
+    padding-inline: var(--space-4);
+    padding-block: var(--space-5);
+}
+
+@media (min-width: 48rem) {
+    .container {
+        padding-block: var(--space-7);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }
