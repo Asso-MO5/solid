@@ -31,3 +31,14 @@ test("la navigation propose la connexion et pas de déconnexion sans session", a
   await expect(page.getByRole("link", { name: "Connexion" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Déconnexion" })).toHaveCount(0);
 });
+
+test("le lien Connexion déclenche une navigation pleine page vers la route API", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Connexion" }).click();
+
+  // Le routeur ne doit pas intercepter le clic : le navigateur charge la
+  // route API et le serveur répond (ici l'issuer factice des tests est
+  // injoignable, la route renvoie son erreur 500 en français).
+  await expect(page).toHaveURL(/\/api\/auth\/signin$/);
+  await expect(page.getByText("Configuration Zitadel invalide")).toBeVisible();
+});

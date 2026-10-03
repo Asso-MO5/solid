@@ -8,8 +8,9 @@ export function UserZone(props: { viewer?: AuthenticatedUser | null }) {
     <Show
       when={props.viewer}
       fallback={
-        /* Lien natif : la route API redirige vers Zitadel, hors navigation SPA. */
-        <a href="/api/auth/signin" class={styles.connexion}>
+        /* target=_self : le routeur n'intercepte pas, la route API redirige
+           vers Zitadel en navigation pleine page. */
+        <a href="/api/auth/signin" target="_self" class={styles.connexion}>
           Connexion
         </a>
       }

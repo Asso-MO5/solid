@@ -7,8 +7,9 @@ export default function UnauthorizedPage() {
       <h1>Connexion requise</h1>
       <p>Votre session est absente ou a expiré.</p>
       <p>
-        {/* Lien natif : la route API redirige vers Zitadel, hors navigation SPA. */}
-        <a href="/api/auth/signin">Se connecter</a>
+        {/* target=_self : le routeur n'intercepte pas, la route API redirige
+            vers Zitadel en navigation pleine page. */}
+        <a href="/api/auth/signin" target="_self">Se connecter</a>
       </p>
     </main>
   );
