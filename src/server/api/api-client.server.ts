@@ -1,6 +1,6 @@
 import { env } from "~/server/env/env.server";
 
-/** Normalized error for a failed Ocelot API call. */
+/** Erreur normalisée d'un appel vers l'API Ocelot. */
 export class ApiError extends Error {
   readonly status: number;
 
@@ -11,14 +11,23 @@ export class ApiError extends Error {
   }
 }
 
+export interface ApiFetchOptions extends RequestInit {
+  /** Jeton d'accès du viewer pour les appels authentifiés vers Ocelot. */
+  token?: string;
+}
+
 /**
- * Base HTTP client for the Ocelot API, server-side only.
- * Each feature builds its business calls on top of this function.
+ * Client HTTP de base vers l'API Ocelot, côté serveur uniquement.
+ * Chaque feature construit ses appels métier au-dessus de cette fonction :
+ * elle transmet le jeton du viewer, sinon la clé d'API serveur si définie.
  */
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const headers = new Headers(init?.headers);
+export async function apiFetch<T>(path: string, options?: ApiFetchOptions): Promise<T> {
+  const { token, ...init } = options ?? {};
+  const headers = new Headers(init.headers);
   headers.set("Accept", "application/json");
-  if (env.ocelotApiKey) {
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  } else if (env.ocelotApiKey) {
     headers.set("Authorization", `Bearer ${env.ocelotApiKey}`);
   }
 

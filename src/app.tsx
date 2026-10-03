@@ -3,6 +3,7 @@ import { MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { ErrorBoundary, type ParentProps, Suspense } from "solid-js";
+import { AppLayout } from "~/features/layout/app-layout.view";
 import "./app.css";
 
 function RootLayout(props: ParentProps) {
@@ -11,7 +12,7 @@ function RootLayout(props: ParentProps) {
       <Title>Musée MO5</Title>
       <ErrorBoundary
         fallback={(error, reset) => (
-          <main class="erreur-boundary">
+          <main class="container">
             <p role="alert">Une erreur inattendue est survenue.</p>
             <button type="button" onClick={reset}>
               Réessayer
@@ -20,7 +21,9 @@ function RootLayout(props: ParentProps) {
           </main>
         )}
       >
-        <Suspense>{props.children}</Suspense>
+        <Suspense>
+          <AppLayout>{props.children}</AppLayout>
+        </Suspense>
       </ErrorBoundary>
     </MetaProvider>
   );
