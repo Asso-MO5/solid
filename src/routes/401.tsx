@@ -1,5 +1,4 @@
 import { Title } from "@solidjs/meta";
-import { A } from "@solidjs/router";
 
 export default function UnauthorizedPage() {
   return (
@@ -8,7 +7,8 @@ export default function UnauthorizedPage() {
       <h1>Connexion requise</h1>
       <p>Votre session est absente ou a expiré.</p>
       <p>
-        <A href="/api/auth/signin">Se connecter</A>
+        {/* Lien natif : la route API redirige vers Zitadel, hors navigation SPA. */}
+        <a href="/api/auth/signin">Se connecter</a>
       </p>
     </main>
   );
